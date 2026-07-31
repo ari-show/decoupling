@@ -181,6 +181,7 @@ synthetic では強く、FreshRetailNet では弱い。
 | latent split だけでは proposal の中心にならない | direct では day/hour が小幅改善、residual では `global/local` が最良 | 主張を 4変数への分解 + constraints に置く |
 | 周辺研究との差分が latent disentanglement に見えやすい | 元論文との近さから誤読されやすい | related work で latent 分離と 4変数への分解の違いを明記 |
 | residual target が恣意的に見える | baseline により residual structure が変わる | baseline/residual 診断を前処理として位置づける |
+| 潜在次元数の根拠が未検証 | 現在の最終系設定（`configs/2-Exp-15_final_freshretailnet.json`等）では series/day/hour を各10次元、interaction を8次元としている（`use_local: false` のため local は不使用）が、予備的な設定のままで次元感度を比較していない | 発表では次元数を主張しない。2・4・8・16次元などで予測性能、成分の安定性、seed間分散、計算量を比較する（詳細は [research_direction_2026-08.md](research_direction_2026-08.md) 2-3節） |
 
 関連研究レビューを踏まえると、今後の改良は「より多くの latent を追加する」方向ではなく、次を優先する。
 
