@@ -38,3 +38,6 @@
 | 2-Exp-35 | [2-Exp-35_freshretailnet_component_tsne.md](2-Exp-35_freshretailnet_component_tsne.md) | FreshRetailNet-50K の推定hour成分をt-SNEと定量指標で検証 |
 | 2-Exp-36 | [2-Exp-36_latent_dimension_sensitivity.md](2-Exp-36_latent_dimension_sensitivity.md) | 潜在次元 {2,4,8,16} と現行 10/10/10/8 の感度分析（JIMA-03） |
 | 2-Exp-37 | [2-Exp-37_hyperparameter_sensitivity.md](2-Exp-37_hyperparameter_sensitivity.md) | 主結果条件の HP 感度と raw/calibration 寄与分離（JIMA-02 支援） |
+| 2-Exp-38 | [2-Exp-38_empirical_vs_nn_epochs.md](2-Exp-38_empirical_vs_nn_epochs.md) | 経験的 ANOVA vs NN の窓内比較を学習量統制で再検証 |
+| 2-Exp-39 | [2-Exp-39_future_day_empirical_vs_nn.md](2-Exp-39_future_day_empirical_vs_nn.md) | 実データ未来日での経験的 ANOVA vs NN（学習量統制・5 seed） |
+| 2-Exp-40 | [2-Exp-40_jima_main_results.md](2-Exp-40_jima_main_results.md) | JIMA 主結果の確定（early stopping・フルスケール・主表 5 行） |

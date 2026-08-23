@@ -1275,6 +1275,10 @@ def run_variant(config: dict[str, Any], variant: dict[str, Any], bundle, device:
     best = float("inf")
     best_path = out_dir / "best.pt"
     best_epoch = 0
+    patience = int(train_cfg.get("early_stopping_patience", 0))
+    min_delta = float(train_cfg.get("early_stopping_min_delta", 0.0))
+    epochs_without_improvement = 0
+    stopped_epoch = 0
     for epoch in range(1, int(train_cfg["epochs"]) + 1):
         train_losses = run_epoch(model, train_loader, variant_config, device, optimizer, f"{name} train {epoch}", scaler=scaler)
         valid_losses = run_epoch(model, valid_loader, variant_config, device, None, f"{name} valid {epoch}")
@@ -1282,10 +1286,23 @@ def run_variant(config: dict[str, Any], variant: dict[str, Any], bundle, device:
         append_jsonl(out_dir / "history.jsonl", row)
         score = row[str(train_cfg.get("selection_metric", "valid_loss_residual_reconstruction"))]
         logger.info("Epoch %d complete: %s", epoch, row)
-        if score < best:
+        stopped_epoch = epoch
+        if score < best - min_delta:
             best = float(score)
             best_epoch = epoch
+            epochs_without_improvement = 0
             torch.save({"model": model.state_dict(), "config": variant_config, "variant": variant}, best_path)
+        else:
+            epochs_without_improvement += 1
+            if patience > 0 and epochs_without_improvement >= patience:
+                logger.info(
+                    "Early stopping at epoch=%d best_epoch=%d best=%.5f patience=%d",
+                    epoch,
+                    best_epoch,
+                    best,
+                    patience,
+                )
+                break
     checkpoint = torch.load(best_path, map_location=device, weights_only=False)
     model.load_state_dict(checkpoint["model"])
     probes_enabled = bool(variant_config.get("probes", {}).get("enabled", True))
@@ -1309,7 +1326,7 @@ def run_variant(config: dict[str, Any], variant: dict[str, Any], bundle, device:
     if not bool(output_cfg.get("save_checkpoints", True)) and best_path.exists():
         best_path.unlink()
     write_json(out_dir / "metrics.json", metrics)
-    return {"name": name, "best_validation_score": best, "best_epoch": best_epoch, **metrics}
+    return {"name": name, "best_validation_score": best, "best_epoch": best_epoch, "stopped_epoch": stopped_epoch, **metrics}
 
 
 def run_residual_experiments(config_path: str) -> dict[str, Any]:
