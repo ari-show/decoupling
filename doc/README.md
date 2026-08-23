@@ -36,3 +36,5 @@
 | 2-Exp-27 | [2-Exp-27_direct_vs_residual_bridge.md](2-Exp-27_direct_vs_residual_bridge.md) | direct target と residual target の最小比較 |
 | 2-Exp-28 | [2-Exp-28_latent_vs_output_decomposition.md](2-Exp-28_latent_vs_output_decomposition.md) | latent split と 4変数への分解の直接比較 |
 | 2-Exp-35 | [2-Exp-35_freshretailnet_component_tsne.md](2-Exp-35_freshretailnet_component_tsne.md) | FreshRetailNet-50K の推定hour成分をt-SNEと定量指標で検証 |
+| 2-Exp-36 | [2-Exp-36_latent_dimension_sensitivity.md](2-Exp-36_latent_dimension_sensitivity.md) | 潜在次元 {2,4,8,16} と現行 10/10/10/8 の感度分析（JIMA-03） |
+| 2-Exp-37 | [2-Exp-37_hyperparameter_sensitivity.md](2-Exp-37_hyperparameter_sensitivity.md) | 主結果条件の HP 感度と raw/calibration 寄与分離（JIMA-02 支援） |
