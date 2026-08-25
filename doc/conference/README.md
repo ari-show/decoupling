@@ -4,6 +4,7 @@
 | --- | --- | --- |
 | APIEMS 2026 | [apiems2026/README.md](apiems2026/README.md) | CfP締切 2026-09-30、当日 2026-11-29（釜山）。投稿・登録・渡航準備メモ |
 | JIMA 2026年秋季大会 | [jima2026/schedule.md](jima2026/schedule.md) | 発表申込（題目＋400字概要）は 2026-08-31、予稿PDFは 2026-09-28、対面開催は 10-23〜25（姫路）。 |
+| JIMA 2026 提案方向 | [jima2026/proposal_direction.md](jima2026/proposal_direction.md) | 2-Exp-36〜40 で確定した主張・主表・題目/400字概要ドラフト・予稿構成・旧数値の修正原則の正本 |
 
 ## 今後のスケジュール（2026-08-22時点）
 
