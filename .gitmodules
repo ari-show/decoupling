@@ -1,3 +1,7 @@
 [submodule "doc/conference/apiems2026/paper"]
 	path = doc/conference/apiems2026/paper
 	url = git@github.com:ShotaArima/peper-APIEMS2026.git
+[submodule "doc/conference/jima2026/paper-jima2026fall"]
+	path = doc/conference/jima2026/paper-jima2026fall
+	url = git@github.com:ari-show/peper-JIMA2026fall.git
+	branch = main
