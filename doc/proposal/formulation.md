@@ -312,6 +312,8 @@ $$
 
 である。
 
+実装が実際に計算している Encoder の式は [Appendix C. 実装上の Encoder / Decoder の式](#appendix-c-実装上の-encoder--decoder-の式) に示す。
+
 ## 7. Decoder の役割
 
 Decoder は、Encoder が作った表現を 4 つの補正成分に変換する。
@@ -1257,3 +1259,229 @@ $$
 - 潜在表現 $z$ が真の要因と対応すること（本文 14 節と同じ）。
 - 欠損・不均衡データでの一意性（完全格子を仮定している。欠損下の扱いは H-EXT-02 の重み付き中心化で別途検討する）。
 - 学習（最適化）が良い解へ収束すること。
+
+## Appendix C. 実装上の Encoder / Decoder の式
+
+作成日: 2026-09-29
+
+本文 6〜9 節は Encoder を $\mathrm{Enc}_g(x)$ のように抽象的に書いた。ここでは、実装
+（`src/decoupled_ts/retail_models.py`、`src/decoupled_ts/residual_models.py`）が
+実際に計算している式を書き下す。理論（Appendix B の 2 軸 Global/Local 分解）と
+実装の対応、および両者のずれを明確にするためである。
+
+### C.1 入力とマスク
+
+系列 $i$ の入力は日 $\times$ 時間帯の格子であり、各セル $(d,h)$ に 13 次元の特徴
+ベクトルが対応する（$D=28$、$H=24$、$F=13$）。
+
+$$
+x_{i,d,h}
+=
+\bigl(\,
+r_{i,d,h},\;
+\kappa_{i,d,h},\;
+w_{i,d},\;
+\tau_h,\;
+\omega_d
+\,\bigr)
+\in \mathbb{R}^{F}
+$$
+
+| 記号 | 内容 | 次元 |
+|---|---|---:|
+| $r_{i,d,h}$ | 基準値からの残差（学習対象と同じ量を入力にも持つ） | 1 |
+| $\kappa_{i,d,h}$ | 欠品フラグ | 1 |
+| $w_{i,d}$ | 日次情報（割引・休日・販促・降水・気温・湿度・風速） | 7 |
+| $\tau_h$ | 時刻の $\sin,\cos$ | 2 |
+| $\omega_d$ | 曜日の $\sin,\cos$ | 2 |
+
+マスクは特徴量ごとに持つ。
+
+$$
+m_{i,d,h}
+=
+(\,o_{i,d,h},\; 1,\; 1,\; \dots,\; 1\,)
+\in \{0,1\}^{F}
+$$
+
+ここで $o_{i,d,h}=1$ は欠品でないセルを表し、本文 10 節の観測マスクと一致する。
+未来日評価（窓末尾 $k$ 日を未観測として扱う設定）では、指定したチャネルについて
+入力値とマスクの双方を 0 にする。
+
+### C.2 マスク付きモーメント統計
+
+セル集合 $S$ について、チャネル $k$ ごとの平均と標準偏差を次で定める。
+
+$$
+\mu_S^{(k)}
+=
+\frac{\sum_{(d,h)\in S} m^{(k)}_{d,h}\, x^{(k)}_{d,h}}
+{\max\bigl(1,\ \sum_{(d,h)\in S} m^{(k)}_{d,h}\bigr)}
+$$
+
+$$
+\sigma_S^{(k)}
+=
+\sqrt{
+\frac{\sum_{(d,h)\in S} m^{(k)}_{d,h}\bigl(x^{(k)}_{d,h}-\mu_S^{(k)}\bigr)^2}
+{\max\bigl(1,\ \sum_{(d,h)\in S} m^{(k)}_{d,h}\bigr)}
++\epsilon}
+$$
+
+両者を並べたものを $s_S=[\mu_S;\ \sigma_S]\in\mathbb{R}^{2F}$ と書く。
+
+**重要な点**: Encoder が参照するのはセルの生の値ではなく、この 1 次・2 次モーメントだけである。
+
+### C.3 現行モデルの Encoder（4 系統）
+
+$$
+z^{g}_i
+=
+\mathrm{MLP}_g\bigl(s_{[D]\times[H]}\bigr)
+$$
+
+$$
+e_{i,d}
+=
+\mathrm{ReLU}\bigl(W_a\, s_{\{d\}\times[H]}\bigr),
+\qquad
+\eta_{i,d}
+=
+\mathrm{GRU}\bigl(\eta_{i,d-1},\, e_{i,d}\bigr),
+\qquad
+z^{a}_{i,d}
+=
+V_a\,\eta_{i,d}
+$$
+
+$$
+z^{c}_{i,h}
+=
+\mathrm{MLP}_c\bigl(s_{[D]\times\{h\}}\bigr)
+$$
+
+$$
+z^{u}_{i,d,h}
+=
+\mathrm{MLP}_u\bigl([\,z^{a}_{i,d};\ z^{c}_{i,h}\,]\bigr)
+$$
+
+$\mathrm{MLP}$ は Linear $\to$ ReLU $\to$ Linear、$\eta_{i,0}=0$ である。
+主設定では $z^g,z^a,z^c\in\mathbb{R}^{10}$、$z^u\in\mathbb{R}^{8}$、hidden は 160。
+
+### C.4 Decoder ヘッドと中心化
+
+$$
+\tilde g_i = f_g(z^g_i),\quad
+\tilde a_{i,d} = f_a(z^a_{i,d}),\quad
+\tilde c_{i,h} = f_c(z^c_{i,h}),\quad
+\tilde u_{i,d,h} = f_u(z^u_{i,d,h})
+$$
+
+各 $f$ は Linear $\to$ ReLU $\to$ Dropout $\to$ Linear でスカラーを出す。中心化は
+
+$$
+\hat a_{i,d} = \tilde a_{i,d}-\frac{1}{D}\sum_{d'}\tilde a_{i,d'},
+\qquad
+\hat c_{i,h} = \tilde c_{i,h}-\frac{1}{H}\sum_{h'}\tilde c_{i,h'}
+$$
+
+$$
+\hat u = \tilde u - \mathrm{mean}_d(\tilde u) - \mathrm{mean}_h\bigl(\tilde u - \mathrm{mean}_d(\tilde u)\bigr)
+$$
+
+であり、逐次の二重中心化により両方向の周辺平均がともに 0 になる。最終的に
+
+$$
+\hat r_{i,d,h}
+=
+\tilde g_i + \hat a_{i,d} + \hat c_{i,h} + \hat u_{i,d,h},
+\qquad
+\hat y_{i,d,h} = b_{i,d,h} + \hat r_{i,d,h}
+$$
+
+となる。$\tilde g$ には中心化を課さない（本文 8 節と同じ）。
+
+### C.5 式から読める 4 つの性質
+
+1. **Encoder はセルの生値を見ない。** 軸ごとのモーメント統計だけを見る（C.2）。
+2. **日軸だけが順序を持つ。** 系列と時間帯は平均のみなので軸内の並べ替えに対して不変だが、
+   日軸は GRU を通すため順序に依存する。したがって現行 Encoder は Appendix B が要求する
+   $S_D\times S_H$ の対称性を**満たしていない**。対称性から分解を導く立場を取るなら、
+   ここが調整すべき箇所である。
+3. **交互作用はセルに触れない。** $z^u$ は $z^a_{i,d}$ と $z^c_{i,h}$ だけから作られる。
+   これは恒等写像への抜け道を塞ぐボトルネックとして機能する（2-Exp-42 で、cell-level
+   特徴から $z^u$ を作ると観測残差をコピーする退化が起きることを確認した）。
+4. **日表現に売上が流れ込む経路がある。** $s_{\{d\}\times[H]}$ の第 1 成分はその日の残差の
+   平均であり、GRU を通じて後続の日の $z^a$ にも伝わる。未来日評価ではその日自身の売上は
+   $o=0$ で落ちるが、共変量 $w_{i,d}$ のマスクは 1 のままなので、未来日の共変量は日表現に入る。
+
+### C.6 統一モデル（1 Encoder + 1 Decoder + ANOVA 射影）
+
+現行が「平均してから変換」であるのに対し、統一モデルは「セルごとに変換してから平均」する。
+
+$$
+\phi_{i,d,h}
+=
+\mathrm{MLP}_{\mathrm{bb}}\bigl([\,x_{i,d,h};\ m_{i,d,h}\,]\bigr)
+$$
+
+$$
+z^{g}_i
+=
+W_g\,\frac{\sum_{d,h} o_{i,d,h}\,\phi_{i,d,h}}{\max(1,\sum_{d,h} o_{i,d,h})},
+\qquad
+z^{a}_{i,d}
+=
+W_a\,\frac{\sum_{h} o_{i,d,h}\,\phi_{i,d,h}}{\max(1,\sum_{h} o_{i,d,h})},
+\qquad
+z^{c}_{i,h}
+=
+W_c\,\frac{\sum_{d} o_{i,d,h}\,\phi_{i,d,h}}{\max(1,\sum_{d} o_{i,d,h})}
+$$
+
+$$
+z^{u}_{i,d,h}
+=
+\mathrm{MLP}_u\bigl([\,z^{a}_{i,d};\ z^{c}_{i,h}\,]\bigr)
+$$
+
+$$
+\tilde y_{i,d,h}
+=
+\mathrm{Dec}\bigl([\,z^g_i;\ z^a_{i,d};\ z^c_{i,h};\ z^u_{i,d,h}\,]\bigr),
+\qquad
+(\hat g,\hat a,\hat c,\hat u)
+=
+(P_g,\,P_a,\,P_c,\,P_u)\,\tilde Y_i
+$$
+
+$P_\bullet$ は Appendix B の直交射影であり、中心化は後処理ではなく構造として成立する。
+
+現行モデルとの違いは 3 点である。
+
+| 項目 | 現行モデル | 統一モデル |
+|---|---|---|
+| 順序 | 日軸に GRU（$S_D$ 非同変） | 再帰なし。平均は $S_D\times S_H$ 同変（対称性は時刻・曜日の特徴量が破る） |
+| 平均の重み | チャネルごとのマスク $m^{(k)}$ | セルのスカラー $o$ を全特徴量に共通 |
+| 未来日の共変量 | 日表現に入る | **入らない**（下記） |
+
+### C.7 未来日における両モデルの違い
+
+統一モデルのプーリングの重みは $o_{i,d,h}$ 1 本であり、全特徴量に共通してかかる。
+未来日は全セルで $o=0$ となるため、分子が 0、分母が $\max(1,0)=1$ となり、
+
+$$
+z^{a}_{i,d}
+=
+W_a\cdot \mathbf{0}
+=
+(\text{バイアス項のみ})
+$$
+
+すなわち未来日の日表現は**定数**になる。したがって統一モデルは未来日の共変量
+（天候も休日も販促も）を一切使わず、未来日 2 日分の予測は同一になる。
+
+一方、現行モデルはチャネルごとのマスクを使うため、未来日でも共変量のマスクは 1 で
+あり、$w_{i,d}$ が日表現に入る。この非対称性は未来日評価の解釈に直接影響するため、
+2-Exp-43 で数値として切り分ける。
