@@ -1,6 +1,6 @@
 # APIEMS 2026
 
-更新日: 2026-06-16
+更新日: 2026-09-30
 
 APIEMS 2026 に向けた学会情報、投稿要項、スケジュール、準備事項を分割して管理する。
 
@@ -14,6 +14,7 @@ APIEMS 2026 に向けた学会情報、投稿要項、スケジュール、準�
 | [scope-and-fit.md](scope-and-fit.md) | CFP の募集領域と本研究との対応 |
 | [preparation.md](preparation.md) | 投稿、登録、渡航、宿泊、ビザ招待状の準備 |
 | [open-questions.md](open-questions.md) | 未確認事項、公式情報間の差分、再確認が必要な点 |
+| [work-log.md](work-log.md) | EasyChair、投稿、登録などの実作業ログ |
 
 ## 最重要メモ
 
@@ -21,6 +22,7 @@ APIEMS 2026 に向けた学会情報、投稿要項、スケジュール、準�
 - 投稿締切は CFP PDF 上では `2026-07-31`。
 - 公式に確認できるテンプレートは Word の `APIEMS FullPaperTemplate.docx` のみ。TeX / LaTeX テンプレートは未確認。
 - Full paper は Best Paper Award と国際誌推薦の対象。Abstract-only は発表審査のみ。
+- 2026-09-30: EasyChair アカウントを作成済み。論文投稿・参加登録・支払いは未実施。
 - 出版扱いは公式ページ間で表記差があるため、投稿前に EasyChair または事務局で確認する。
 
 ## 公式ソース

@@ -1,6 +1,6 @@
 # APIEMS 2026 Submission
 
-更新日: 2026-06-16
+更新日: 2026-09-30
 
 ## 投稿方式
 
@@ -75,7 +75,8 @@ Submission ページでは、Full paper は会議 proceedings として別途出
 
 ## 投稿作業
 
-- EasyChair アカウントを確認する。
+- EasyChair アカウントを作成済み（2026-09-30）。
+- EasyChair で APIEMS 2026 の投稿画面と締切を確認する。
 - 共著者の氏名、所属、メールアドレス、著者順を確定する。
 - Abstract-only / Full paper のどちらで出すか決める。
 - Full paper の場合は公式テンプレートをダウンロードして使う。
