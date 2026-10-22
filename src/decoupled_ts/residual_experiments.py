@@ -1079,7 +1079,7 @@ def save_latent_outputs(arrays: dict[str, np.ndarray], out_dir: Path, output_cfg
             if key in arrays:
                 np.save(out_dir / f"{key}.npy", arrays[key])
     if bool(output_cfg.get("save_component_analysis_arrays", False)):
-        for key in ("residual", "observed", "static_ids"):
+        for key in ("residual", "observed", "static_ids", "sales", "baseline"):
             if key in arrays:
                 np.save(out_dir / f"{key}.npy", arrays[key])
     if bool(output_cfg.get("save_hour_heatmap", True)) and "z_hour" in arrays:
@@ -1088,6 +1088,38 @@ def save_latent_outputs(arrays: dict[str, np.ndarray], out_dir: Path, output_cfg
             writer.writerow(["hour", *[f"dim_{i}" for i in range(arrays["z_hour"].shape[-1])]])
             for hour, row in enumerate(arrays["z_hour"].mean(axis=0)):
                 writer.writerow([hour, *[float(v) for v in row]])
+
+
+def _day_covariate_columns(config: dict[str, Any]) -> list[tuple[str, int]]:
+    """Day-level covariate names with their channel positions in the input grid.
+
+    Same convention as ``residual_diagnostics._feature_indices``: the sales and
+    stock channels come first, then the day-level numeric columns.
+    """
+    data_cfg = config["dataset"]
+    if data_cfg["name"] in {"synthetic_retail", "structured_residual_retail", "component_residual_retail"}:
+        return [("discount", 2), ("holiday", 3), ("weather", 4)]
+    return [(name, 2 + index) for index, name in enumerate(data_cfg.get("daily_numeric_columns", []))]
+
+
+def save_day_covariates(arrays: dict[str, np.ndarray], out_dir: Path, config: dict[str, Any], output_cfg: dict[str, Any]) -> None:
+    """Save the day-level covariate block used by the 2-Exp-44 component analysis.
+
+    Day-level channels are constant within a day, so the hour-0 slice carries
+    the whole day effect. Written only when component analysis arrays are
+    requested, so existing experiments keep their current output.
+    """
+    if not bool(output_cfg.get("save_component_analysis_arrays", False)) or "grid" not in arrays:
+        return
+    columns = _day_covariate_columns(config)
+    if not columns:
+        return
+    grid = arrays["grid"]
+    if grid.ndim != 4 or grid.shape[3] <= max(index for _, index in columns):
+        raise ValueError(f"grid shape {grid.shape} does not cover the configured day covariate channels")
+    values = grid[:, :, 0, [index for _, index in columns]].astype(np.float32)
+    np.save(out_dir / "day_covariates.npy", values)
+    write_json(out_dir / "day_covariates.json", {"columns": [name for name, _ in columns]})
 
 
 def _masked_profile(values: np.ndarray, observed: np.ndarray, axis: tuple[int, ...]) -> np.ndarray:
@@ -1322,6 +1354,7 @@ def run_variant(config: dict[str, Any], variant: dict[str, Any], bundle, device:
     if bool(output_cfg.get("save_residual_predictions", True)):
         save_residual_predictions(out_dir / "residual_predictions.csv", test_arrays)
     save_latent_outputs(test_arrays, out_dir, output_cfg)
+    save_day_covariates(test_arrays, out_dir, variant_config, output_cfg)
     save_visualization_outputs(test_arrays, out_dir, output_cfg)
     if not bool(output_cfg.get("save_checkpoints", True)) and best_path.exists():
         best_path.unlink()
