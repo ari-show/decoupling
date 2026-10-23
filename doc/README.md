@@ -44,3 +44,4 @@
 | 2-Exp-44 | [2-Exp-44_component_interpretation.md](2-Exp-44_component_interpretation.md) | 主結果条件での成分解釈（分散寄与・bias 帰属・共変量応答・低ランク性） |
 | 2-Exp-46 | [2-Exp-46_epoch_budget_component_stability.md](2-Exp-46_epoch_budget_component_stability.md) | 成分解釈の学習量依存性（epochs 120 / patience 16 と 60 の対照） |
 | 2-Exp-48 | [2-Exp-48_main_table_long_budget.md](2-Exp-48_main_table_long_budget.md) | 主表 4 variant を epochs 240 / patience 24 で取り直し、収束と効果量を再確認 |
+| 2-Exp-50 | [2-Exp-50_latent_swap_counterfactual.md](2-Exp-50_latent_swap_counterfactual.md) | 潜在表現の差し替えによる軸間の漏れ量（中心化出力分解 / 中心化なし / 潜在分割） |
