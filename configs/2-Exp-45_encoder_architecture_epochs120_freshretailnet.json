@@ -139,6 +139,14 @@
       "use_interaction": true,
       "day_encoder": "gru",
       "hour_encoder": "mlp_wide"
+    },
+    {
+      "name": "day_mlp_hour_gru",
+      "type": "output_decomposition",
+      "center_components": true,
+      "use_interaction": true,
+      "day_encoder": "mlp",
+      "hour_encoder": "gru"
     }
   ],
   "probes": {

@@ -20,6 +20,11 @@
         "scenario": "series_mean",
         "left": "day_gru_hour_mlp",
         "right": "day_gru_hour_mlpwide"
+      },
+      {
+        "scenario": "series_mean",
+        "left": "day_gru_hour_mlp",
+        "right": "day_mlp_hour_gru"
       }
     ]
   }

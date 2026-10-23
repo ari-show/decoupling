@@ -1,7 +1,10 @@
 all_runs_left_better,delta_ci_high,delta_ci_low,delta_mean_left_minus_right,delta_std,left,left_better_runs,metric,right,right_better_runs,runs,scenario
 False,0.00029301568865776063,-0.00123361274600029,-0.00047029852867126466,0.0009583391513811481,day_gru_hour_mlp,3,corrected_cell_mae,day_gru_hour_gru,2,5,series_mean
 False,0.004964220523834229,-0.020899665355682374,-0.007967722415924073,0.016236021136548432,day_gru_hour_mlp,3,corrected_cell_wape,day_gru_hour_gru,2,5,series_mean
-False,0.000462380051612854,-0.009757998585700988,-0.0046478092670440676,0.006647345175519766,day_gru_hour_mlp,3,high_residual_top10_corrected_mae,day_gru_hour_gru,2,5,series_mean
+False,0.000462380051612854,-0.00978495180606842,-0.0046478092670440676,0.006647345175519766,day_gru_hour_mlp,3,high_residual_top10_corrected_mae,day_gru_hour_gru,2,5,series_mean
 False,-0.000291074812412262,-0.0018369242548942565,-0.0010617591440677642,0.0010109221423074495,day_gru_hour_mlp,4,corrected_cell_mae,day_gru_hour_mlpwide,1,5,series_mean
-False,-0.004931354522705078,-0.031120872497558592,-0.017988157272338868,0.01712687552180983,day_gru_hour_mlp,4,corrected_cell_wape,day_gru_hour_mlpwide,1,5,series_mean
-True,-0.001905924081802368,-0.007889187335968018,-0.004557231068611145,0.003773169934167891,day_gru_hour_mlp,5,high_residual_top10_corrected_mae,day_gru_hour_mlpwide,0,5,series_mean
+False,-0.004931354522705078,-0.031044960021972656,-0.017988157272338868,0.01712687552180983,day_gru_hour_mlp,4,corrected_cell_wape,day_gru_hour_mlpwide,1,5,series_mean
+True,-0.001905924081802368,-0.0077719569206237795,-0.004557231068611145,0.003773169934167891,day_gru_hour_mlp,5,high_residual_top10_corrected_mae,day_gru_hour_mlpwide,0,5,series_mean
+False,0.00015689581632614136,-0.0008565224707126617,-0.00035468712449073794,0.0006703901080188783,day_gru_hour_mlp,4,corrected_cell_mae,day_mlp_hour_gru,1,5,series_mean
+False,0.0026581525802612306,-0.014676213264465332,-0.006009030342102051,0.011357662837716578,day_gru_hour_mlp,4,corrected_cell_wape,day_mlp_hour_gru,1,5,series_mean
+False,-0.000526389479637146,-0.004793840646743769,-0.0032397300004959107,0.002997871554557816,day_gru_hour_mlp,4,high_residual_top10_corrected_mae,day_mlp_hour_gru,1,5,series_mean
