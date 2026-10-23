@@ -1,0 +1,13 @@
+all_runs_improved,baseline_metric,delta_ci_high,delta_ci_low,delta_mean,delta_std,improved_runs,metric,model,runs,scenario,worse_runs
+True,baseline_cell_mae,-0.020266808569431305,-0.02148170694708824,-0.02089475765824318,0.000786308716363878,5,corrected_cell_mae,day_gru_hour_gru,5,series_mean,0
+True,high_residual_top10_baseline_mae,-0.07522388994693756,-0.0834892898797989,-0.07937128841876984,0.00533538285990476,5,high_residual_top10_corrected_mae,day_gru_hour_gru,5,series_mean,0
+True,baseline_cell_mae,-0.021161269396543503,-0.02166745662689209,-0.0213846392929554,0.0003169408223367323,5,corrected_cell_mae,day_gru_hour_mlp,5,series_mean,0
+True,high_residual_top10_baseline_mae,-0.08309770226478577,-0.08619968891143799,-0.08464869558811187,0.001996246839025495,5,high_residual_top10_corrected_mae,day_gru_hour_mlp,5,series_mean,0
+True,baseline_cell_mae,-0.01961164325475693,-0.02103411704301834,-0.020322880148887633,0.0009040368639605836,5,corrected_cell_mae,day_gru_hour_mlpwide,5,series_mean,0
+True,high_residual_top10_baseline_mae,-0.07624557018280029,-0.08393735885620117,-0.08009146451950074,0.0049189409126335045,5,high_residual_top10_corrected_mae,day_gru_hour_mlpwide,5,series_mean,0
+True,baseline_cell_mae,-0.020427608489990236,-0.02159568518400192,-0.020967357605695725,0.0007450462057867536,5,corrected_cell_mae,day_mlp_hour_gru,5,series_mean,0
+True,high_residual_top10_baseline_mae,-0.07913230061531067,-0.08244878947734832,-0.08088918030261993,0.002218528015045609,5,high_residual_top10_corrected_mae,day_mlp_hour_gru,5,series_mean,0
+True,baseline_cell_mae,-0.02126196473836899,-0.02246931046247482,-0.021863439679145814,0.0007652947039963142,5,corrected_cell_mae,day_mlp_hour_mlp,5,series_mean,0
+True,high_residual_top10_baseline_mae,-0.085205078125,-0.08931899070739746,-0.08728217780590057,0.0026726120449363433,5,high_residual_top10_corrected_mae,day_mlp_hour_mlp,5,series_mean,0
+True,baseline_cell_mae,-0.02095780670642853,-0.02176804542541504,-0.021408972144126893,0.0005210393973096143,5,corrected_cell_mae,day_mlpwide_hour_mlp,5,series_mean,0
+True,high_residual_top10_baseline_mae,-0.08283865451812744,-0.08870575726032257,-0.0859390676021576,0.0038070621475558126,5,high_residual_top10_corrected_mae,day_mlpwide_hour_mlp,5,series_mean,0
