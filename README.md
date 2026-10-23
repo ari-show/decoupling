@@ -194,3 +194,20 @@ To evaluate factor-structured subsets with positive probes, leakage probes, and 
 uv run decoupled-ts residual-sweep --config configs/2-Exp-10_factor_subsets_smoke.json
 uv run decoupled-ts residual-sweep --config configs/2-Exp-10_factor_subsets_freshretailnet.json
 ```
+
+To train with day-level input masking and measure what the latent gains from it
+(short-history rhythm estimation, product-to-store transfer, hidden-day structure):
+
+```bash
+uv run decoupled-ts residual-sweep --config configs/2-Exp-49_masked_day_training_smoke.json
+uv run decoupled-ts residual-sweep --config configs/2-Exp-49_masked_day_training_freshretailnet.json
+uv run decoupled-ts residual-sweep --config configs/2-Exp-49_masked_keep_ratio_freshretailnet.json
+```
+
+The held-out diagnostics are written to `metrics.json` as `maskdiag_*` and summarized by:
+
+```bash
+uv run --with matplotlib python scripts/analyze_2_exp_49_masked_training.py \
+  --run-dir runs/2-Exp-49_masked_day_training_freshretailnet \
+  --out-dir figures/2-Exp-49
+```

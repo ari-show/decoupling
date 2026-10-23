@@ -41,3 +41,4 @@
 | 2-Exp-38 | [2-Exp-38_empirical_vs_nn_epochs.md](2-Exp-38_empirical_vs_nn_epochs.md) | 経験的 ANOVA vs NN の窓内比較を学習量統制で再検証 |
 | 2-Exp-39 | [2-Exp-39_future_day_empirical_vs_nn.md](2-Exp-39_future_day_empirical_vs_nn.md) | 実データ未来日での経験的 ANOVA vs NN（学習量統制・5 seed） |
 | 2-Exp-40 | [2-Exp-40_jima_main_results.md](2-Exp-40_jima_main_results.md) | JIMA 主結果の確定（early stopping・フルスケール・主表 5 行） |
+| 2-Exp-49 | [2-Exp-49_masked_day_training.md](2-Exp-49_masked_day_training.md) | 日のランダムマスク学習が短履歴推定・移植性・隠した日の day 成分に与える効果 |
