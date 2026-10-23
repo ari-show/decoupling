@@ -43,3 +43,4 @@
 | 2-Exp-40 | [2-Exp-40_jima_main_results.md](2-Exp-40_jima_main_results.md) | JIMA 主結果の確定（early stopping・フルスケール・主表 5 行） |
 | 2-Exp-42 | [2-Exp-42_unified_architecture_ladder.md](2-Exp-42_unified_architecture_ladder.md) | 統一アーキテクチャ ladder: 共有 backbone / 1Enc+1Dec+射影の非劣性（分水嶺 B、H-B1） |
 | 2-Exp-43 | [2-Exp-43_future_covariate_masking.md](2-Exp-43_future_covariate_masking.md) | 未来日評価で天候（実測値）を隠し、2-Exp-39/42 の未来日主張を先読みなしで再検証 |
+| 2-Exp-52 | [2-Exp-52_unified_future_horizon.md](2-Exp-52_unified_future_horizon.md) | 統一アーキテクチャの未来日性能を 7 日マスク・240 epoch で再現確認 |
