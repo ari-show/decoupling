@@ -158,6 +158,13 @@ uv run decoupled-ts residual-sweep --config configs/2-Exp-45_encoder_architectur
 uv run decoupled-ts residual-result-analysis --config configs/2-Exp-45_paired_analysis_freshretailnet.json
 ```
 
+条件 4 の確定（epoch 上限 120、hour 側 3 variant × 5 seed = 15 run）:
+
+```bash
+uv run decoupled-ts residual-sweep --config configs/2-Exp-45_encoder_architecture_epochs120_freshretailnet.json
+uv run decoupled-ts residual-result-analysis --config configs/2-Exp-45_paired_analysis_epochs120_freshretailnet.json
+```
+
 2-Exp-40 の 40 run が RTX 5060 Ti で約 17 分だったので、本実験 30 run は 15〜20 分を見込む。
 `output` は全保存フラグを false にしているので、出力は metrics と CSV のみで数 MB に収まる。
 
@@ -172,6 +179,7 @@ runs/2-Exp-45_paired_analysis_freshretailnet/
 
 figures/2-Exp-45/
   all_results.csv / aggregate.csv / paired_model_delta.csv / baseline_delta.csv
+  epochs120/all_results.csv / aggregate.csv / paired_model_delta.csv / baseline_delta.csv
 ```
 
 `runs/` は git 管理外なので、判定に使う 4 つの CSV を `figures/2-Exp-45/` に複製して記録する。
@@ -243,7 +251,8 @@ SD の範囲で差はない。
 （`day_gru_hour_gru` seed 17 は best 58、`day_mlp_hour_gru` seed 31 は best 60、
 同 seed 59 は best 57）。3 run とも hour 側が GRU の variant で、打ち切り時点でも
 検証スコアが改善中だった。hour=GRU の成績は学習量不足の側に寄っている可能性があるため、
-条件 4 の「時間帯軸は MLP で足りる」は、epoch 上限を伸ばした比較では弱まりうる。
+条件 4 の「時間帯軸は MLP で足りる」は、epoch 上限を伸ばした比較では弱まりうる
+（§条件 4 の確定 で取り直した）。
 一方、本実験の主眼である日軸の比較（条件 2・3）は全 run が上限より手前で停止しており、
 この影響を受けない。
 
@@ -284,8 +293,9 @@ SD の範囲で差はない。
    容量だけ揃えた `day_gru_hour_mlpwide` は `corrected_cell_mae` −0.00106
    （CI 上限 −0.00029）、top10 は 5 seed すべてで現行が良い。
    **時間帯軸は MLP で足り、文脈混合も容量追加も悪化方向である。**
-   ただし hour=GRU の 3 run が epoch 上限で打ち切られているため、この判定は暫定とし、
-   後続実験 1 で epoch 上限を伸ばして取り直す。
+   ただし hour=GRU の 3 run が epoch 上限で打ち切られているため、この判定は
+   epoch 上限 120 で取り直した（§条件 4 の確定）。結論は変わらないが、
+   top10 MAE の有意性は消える。
 5. **役割の入れ替え（条件 5）: 成立。** `day_mlp_hour_gru` は現行に勝たない
    （`corrected_cell_mae` −0.00042、top10 は 5 seed すべて現行が良い）。
    「day に GRU、hour に MLP」という割り当ての向き自体は、逆向きより良い。
@@ -313,12 +323,51 @@ GRU は day 成分の説明力を増やしてもいない。
 全 variant で完全に同値（0.1235 / 0.5418）だった。これらは残差データ側の診断量であり、
 モデル比較には使えない指標だと確認できた。
 
+### 条件 4 の確定（epoch 上限 120）
+
+60 epoch 版では hour=GRU の run が上限で打ち切られていたため、hour 側 3 variant
+（`day_gru_hour_mlp` / `day_gru_hour_gru` / `day_gru_hour_mlpwide`）× 5 seed = 15 run を
+epoch 上限 120（patience 8 は据え置き、他は同条件）で取り直した。
+2026-10-23 にローカル GPU で約 8 分（03:14:26 開始、03:22:29 終了）。
+**上限 120 に達した run は 0 で、全 run が early stopping で止まった**
+（最長は `day_gru_hour_gru` seed 17 の best 73 / stopped 81）。
+
+60 epoch 版で打ち切られていなかった 2 variant（`day_gru_hour_mlp`、`day_gru_hour_mlpwide`）は
+per-seed の値まで完全に一致し、実行の決定性も確認できた。変わったのは
+`day_gru_hour_gru` の seed 17 だけで（best 58 / stopped 60 → best 73 / stopped 81、
+`corrected_cell_mae` 0.04807 → 0.04797）、5 seed 平均は 0.04877 → 0.04875 とほぼ動かない。
+
+| variant | `corrected_cell_mae` | top10 MAE | `residual_r2` | `stopped_epoch` |
+|---|---:|---:|---:|---:|
+| `day_gru_hour_mlp`（現行） | 0.04828 ± 0.00032 | 0.19418 ± 0.00200 | 0.4157 ± 0.0051 | 46.0 ± 9.6 |
+| `day_gru_hour_gru` | 0.04875 ± 0.00081 | 0.19883 ± 0.00565 | 0.3882 ± 0.0224 | 50.4 ± 17.7 |
+| `day_gru_hour_mlpwide` | 0.04934 ± 0.00090 | 0.19874 ± 0.00492 | 0.3864 ± 0.0261 | 40.4 ± 5.8 |
+
+| right | 指標 | delta | 95% CI | 現行が良い seed |
+|---|---|---:|---|---:|
+| `day_gru_hour_gru` | `corrected_cell_mae` | −0.00047 | [−0.00123, +0.00029] | 3/5 |
+| `day_gru_hour_gru` | top10 MAE | −0.00465 | [−0.00976, +0.00046] | 3/5 |
+| `day_gru_hour_mlpwide` | `corrected_cell_mae` | −0.00106 | [−0.00184, −0.00029] | 4/5 |
+| `day_gru_hour_mlpwide` | top10 MAE | −0.00456 | [−0.00789, −0.00191] | 5/5 |
+
+**条件 4 は成立する**（`day_gru_hour_gru` との CI が 0 を含み、GRU が良い側ではない）。
+ただし 60 epoch 版からひとつ判定が変わる。top10 MAE の CI 上限が
+−0.00017 から +0.00046 に動き、**「hour=GRU が有意に悪い」とは言えなくなった**。
+収束させた比較での正しい読み方は「時間帯軸を GRU にしても改善しない（点推定は悪化方向、
+3/5 seed で現行が良い）」であり、「GRU が有意に悪い」ではない。
+`residual_r2` は 0.4157 対 0.3882 で現行が上回る。
+
+容量だけ揃えた `day_gru_hour_mlpwide` は 60 epoch 版と同じく有意に悪い
+（`corrected_cell_mae` CI 上限 −0.00029、top10 は 5 seed すべて現行が良い）。
+**時間帯軸では、文脈混合は改善をもたらさず、容量追加は有意に悪化させる。**
+
 ### 結論と原稿への反映
 
 **「日成分は日の系列なので前日までの文脈を反映できるよう GRU、時間帯成分は周期的な形なので MLP」
-という説明のうち、後半（時間帯＝MLP）は支持されたが（学習量の注記つき）、
-前半（日＝GRU）は支持されない。**
+という説明のうち、後半（時間帯＝MLP）は支持されたが、前半（日＝GRU）は支持されない。**
 日軸では GRU を外した方がわずかに良く、パラメータ数を揃えた MLP とは完全に同等である。
+時間帯軸は、epoch 上限 120 まで収束させても GRU にして改善せず（点推定は悪化方向、3/5 seed）、
+容量を増やすと有意に悪化する。
 
 この結果は、本実験の評価が**窓内の再構成**である（2-Exp-40 と同じく、28 日の観測窓を
 入力として同じ窓の残差を再構成する）ことで説明できる。日 `t` の day 成分は
@@ -328,8 +377,8 @@ GRU の想定した利点が効くとすれば未来日の予測であり、本�
 したがって原稿では次のように扱う。
 
 - 窓内再構成の主結果については、「日/時間帯の構造の違いに合わせて Encoder を選んだが、
-  精度はこの選択に鈍感である（日軸は GRU でも MLP でも同等、時間帯軸は MLP が良い）」と書き、
-  アーキテクチャ選択を主張の根拠にしない。本実験の表をその根拠として引用する。
+  精度はこの選択に鈍感である（日軸は GRU でも MLP でも同等、時間帯軸は GRU にしても改善しない）」
+  と書き、アーキテクチャ選択を主張の根拠にしない。本実験の表をその根拠として引用する。
 - 「前日までの文脈」を GRU の採用理由として書くことは、窓内再構成の範囲では撤回する。
 - 主結果の再走は行わない。現行構成と `day_mlp_hour_mlp` の差は 0.0005（相対 1.0%）で、
   主表の結論（中心化あり 0.04828 対 中心化なし 0.05422）を変えないため。
@@ -337,10 +386,7 @@ GRU の想定した利点が効くとすれば未来日の予測であり、本�
 
 ### 後続実験
 
-1. epoch 上限を 120 程度に伸ばして hour=GRU の 3 run を収束させ、条件 4 を取り直す
-   （2-Exp-42 に `epochs120` の前例がある）。日軸の結論は変わらない見込みなので、
-   hour 側 3 variant に絞れば 15 run で済む。
-2. 未来日評価（2-Exp-39 / 2-Exp-43 の設定、未来セルをマスクして未来日の残差を予測）で
-   同じ 6 variant を回せば、「前日までの文脈」が効く設定があるかを直接確かめられる。
-   本実験の config は `experiments` の 6 行をそのまま持ち込めるので、
-   dataset と `future_mask_channels` の設定を 2-Exp-43 から借りるだけで組める。
+未来日評価（2-Exp-39 / 2-Exp-43 の設定、未来セルをマスクして未来日の残差を予測）で
+同じ 6 variant を回せば、「前日までの文脈」が効く設定があるかを直接確かめられる。
+本実験の config は `experiments` の 6 行をそのまま持ち込めるので、
+dataset と `future_mask_channels` の設定を 2-Exp-43 から借りるだけで組める。
