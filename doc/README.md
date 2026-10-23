@@ -45,3 +45,4 @@
 | 2-Exp-46 | [2-Exp-46_epoch_budget_component_stability.md](2-Exp-46_epoch_budget_component_stability.md) | 成分解釈の学習量依存性（epochs 120 / patience 16 と 60 の対照） |
 | 2-Exp-48 | [2-Exp-48_main_table_long_budget.md](2-Exp-48_main_table_long_budget.md) | 主表 4 variant を epochs 240 / patience 24 で取り直し、収束と効果量を再確認 |
 | 2-Exp-50 | [2-Exp-50_latent_swap_counterfactual.md](2-Exp-50_latent_swap_counterfactual.md) | 潜在表現の差し替えによる軸間の漏れ量（中心化出力分解 / 中心化なし / 潜在分割） |
+| 2-Exp-51 | [2-Exp-51_prospective_screening.md](2-Exp-51_prospective_screening.md) | 適用対象の事前スクリーニング（過去窓→将来窓、未来日マスク条件） |
