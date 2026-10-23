@@ -42,3 +42,4 @@
 | 2-Exp-39 | [2-Exp-39_future_day_empirical_vs_nn.md](2-Exp-39_future_day_empirical_vs_nn.md) | 実データ未来日での経験的 ANOVA vs NN（学習量統制・5 seed） |
 | 2-Exp-40 | [2-Exp-40_jima_main_results.md](2-Exp-40_jima_main_results.md) | JIMA 主結果の確定（early stopping・フルスケール・主表 5 行） |
 | 2-Exp-44 | [2-Exp-44_component_interpretation.md](2-Exp-44_component_interpretation.md) | 主結果条件での成分解釈（分散寄与・bias 帰属・共変量応答・低ランク性） |
+| 2-Exp-47 | [2-Exp-47_component_combination_views.md](2-Exp-47_component_combination_views.md) | 日成分（量）× 交互作用成分（形）の組み合わせ可視化 |
