@@ -14,6 +14,7 @@ from tqdm import tqdm
 
 from .data import load_config
 from .experiment_logging import append_jsonl, setup_run_logger, write_json
+from .masking import masked_holdout_diagnostics, masking_config, sample_hidden_cells
 from .metrics import regression_metrics
 from .residual_diagnostics import _labels_from_grid
 from .residual_models import EmpiricalAnovaResidualModel, OutputDecompositionResidualModel, ResidualFlattenAE, ResidualMultiGrainAE, residual_decouple_penalty
@@ -66,7 +67,17 @@ def _weekday_same_hour_mean_torch(sales: torch.Tensor, observed: torch.Tensor) -
     return baseline
 
 
-def residual_batch(batch: dict[str, torch.Tensor], config: dict[str, Any]) -> dict[str, torch.Tensor]:
+def residual_batch(
+    batch: dict[str, torch.Tensor], config: dict[str, Any], hidden_cells: torch.Tensor | None = None
+) -> dict[str, torch.Tensor]:
+    """Build the residual target and the (possibly masked) encoder input.
+
+    ``hidden_cells`` is an optional ``(batch, days, hours)`` indicator of cells
+    whose sales must not reach the encoder (2-Exp-49 day masking). It is
+    combined with the tail mask from ``residual.future_mask_days``; both hide
+    the same channels and are both excluded from the baseline, so the baseline
+    is always computed from the days the encoder can see.
+    """
     grid = flatten_to_grid(batch["x"])
     mask_grid = flatten_to_grid(batch["mask"])
     sales = grid[..., 0]
@@ -80,7 +91,12 @@ def residual_batch(batch: dict[str, torch.Tensor], config: dict[str, Any]) -> di
     if future_days > 0:
         future_cells = torch.zeros_like(observed)
         future_cells[:, -future_days:, :] = 1.0
-        baseline_observed = observed * (1.0 - future_cells)
+    masked_cells = future_cells
+    if hidden_cells is not None:
+        hidden = hidden_cells.to(observed.device, observed.dtype)
+        masked_cells = hidden if masked_cells is None else torch.clamp(masked_cells + hidden, max=1.0)
+    if masked_cells is not None:
+        baseline_observed = observed * (1.0 - masked_cells)
     if target in {"true_residual", "noisy_true_residual"} and target in batch:
         residual = batch[target].to(sales.device)
         baseline = sales - residual
@@ -119,9 +135,9 @@ def residual_batch(batch: dict[str, torch.Tensor], config: dict[str, Any]) -> di
     x_residual = batch["x"].clone()
     x_residual[:, 0, :] = residual.reshape(residual.shape[0], -1)
     input_mask = batch["mask"]
-    if future_cells is not None:
+    if masked_cells is not None:
         input_mask = batch["mask"].clone()
-        flat_future = future_cells.reshape(future_cells.shape[0], -1)
+        flat_future = masked_cells.reshape(masked_cells.shape[0], -1)
         for channel in residual_cfg.get("future_mask_channels", [0, 1]):
             channel = int(channel)
             if channel < x_residual.shape[1]:
@@ -137,6 +153,8 @@ def residual_batch(batch: dict[str, torch.Tensor], config: dict[str, Any]) -> di
     }
     if future_cells is not None:
         result["future_cells"] = future_cells
+    if hidden_cells is not None:
+        result["hidden_cells"] = hidden_cells.to(observed.device, observed.dtype)
     result.update(extra)
     return result
 
@@ -287,10 +305,23 @@ def run_epoch(
     amp_enabled = bool(config["train"].get("amp", True)) and device.type == "cuda"
     model.train(training)
     totals: dict[str, float] = {}
+    # Day masking is a training-time augmentation only; validation and test
+    # always see the full window so the selection metric stays comparable.
+    mask_cfg = masking_config(config) if training else {}
+    mask_generator = torch.Generator().manual_seed(int(config.get("seed", 0))) if mask_cfg else None
     progress = tqdm(loader, desc=desc, unit="batch")
     for step, batch in enumerate(progress, start=1):
         batch = {key: value.to(device, non_blocking=True) for key, value in batch.items()}
-        rb = residual_batch(batch, config)
+        hidden_cells = None
+        if mask_cfg:
+            flat = batch["x"].shape[-1]
+            hours = int(config["dataset"].get("window_size", 24))
+            hidden_cells = sample_hidden_cells(
+                len(batch["x"]), flat // hours, hours, mask_cfg, device, generator=mask_generator
+            )
+        rb = residual_batch(batch, config, hidden_cells=hidden_cells)
+        if hidden_cells is not None and str(mask_cfg.get("loss_on", "all")) == "visible":
+            rb = {**rb, "observed": rb["observed"] * (1.0 - rb["hidden_cells"])}
         if training:
             optimizer.zero_grad(set_to_none=True)
         with torch.set_grad_enabled(training):
@@ -1221,6 +1252,11 @@ def run_variant(config: dict[str, Any], variant: dict[str, Any], bundle, device:
             **config.get("calibration", {}),
             **variant["calibration_overrides"],
         }
+    if "masking_overrides" in variant:
+        variant_config["masking"] = {
+            **config.get("masking", {}),
+            **variant["masking_overrides"],
+        }
     output_cfg = {**config.get("output", {}), **variant.get("output_overrides", {})}
     name = variant["name"]
     out_dir = root_out / name
@@ -1263,6 +1299,7 @@ def run_variant(config: dict[str, Any], variant: dict[str, Any], bundle, device:
     optimizer = torch.optim.AdamW(model.parameters(), lr=float(train_cfg["lr"]), weight_decay=float(train_cfg.get("weight_decay", 0.0)))
     amp_enabled = bool(train_cfg.get("amp", True)) and device.type == "cuda"
     scaler = torch.amp.GradScaler("cuda", enabled=amp_enabled)
+    logger.info("Day masking: %s", masking_config(variant_config) or "disabled")
     logger.info(
         "Runtime: device=%s amp=%s workers=%d train=%d valid=%d test=%d",
         device,
@@ -1319,6 +1356,15 @@ def run_variant(config: dict[str, Any], variant: dict[str, Any], bundle, device:
     metrics.update(run_latent_probes(train_arrays, test_arrays, variant_config))
     metrics.update(evaluate_ablation_metrics(model, test_loader, variant_config, device))
     metrics.update(evaluate_swap_diagnostics(model, test_loader, variant_config, device))
+    metrics.update(
+        masked_holdout_diagnostics(
+            model,
+            test_loader,
+            variant_config,
+            device,
+            latents={key: test_arrays[key] for key in ("z_global", "z_day", "z_hour") if key in test_arrays},
+        )
+    )
     if bool(output_cfg.get("save_residual_predictions", True)):
         save_residual_predictions(out_dir / "residual_predictions.csv", test_arrays)
     save_latent_outputs(test_arrays, out_dir, output_cfg)
