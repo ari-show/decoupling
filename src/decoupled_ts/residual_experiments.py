@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import csv
+import time
 from pathlib import Path
 from typing import Any
 
@@ -143,6 +144,8 @@ def residual_batch(batch: dict[str, torch.Tensor], config: dict[str, Any]) -> di
 
 def make_residual_model(config: dict[str, Any], variant: dict[str, Any], input_dim: int, days: int, hours: int) -> nn.Module:
     model_cfg = config["model"]
+    day_encoder = str(variant.get("day_encoder", model_cfg.get("day_encoder", "gru")))
+    hour_encoder = str(variant.get("hour_encoder", model_cfg.get("hour_encoder", "mlp")))
     if variant["type"] == "flatten_ae":
         return ResidualFlattenAE(
             input_dim=input_dim,
@@ -168,6 +171,8 @@ def make_residual_model(config: dict[str, Any], variant: dict[str, Any], input_d
             use_hour=bool(variant.get("use_hour", True)),
             use_interaction=bool(variant.get("use_interaction", False)),
             dropout=float(model_cfg.get("dropout", 0.1)),
+            day_encoder=day_encoder,
+            hour_encoder=hour_encoder,
         )
     if variant["type"] == "empirical_anova":
         return EmpiricalAnovaResidualModel(days=days, hours=hours)
@@ -184,6 +189,8 @@ def make_residual_model(config: dict[str, Any], variant: dict[str, Any], input_d
             dropout=float(model_cfg.get("dropout", 0.1)),
             center_components=bool(variant.get("center_components", True)),
             use_interaction=bool(variant.get("use_interaction", True)),
+            day_encoder=day_encoder,
+            hour_encoder=hour_encoder,
         )
     raise ValueError(f"unknown residual variant type: {variant['type']}")
 
@@ -1260,6 +1267,7 @@ def run_variant(config: dict[str, Any], variant: dict[str, Any], bundle, device:
     valid_loader = make_loader(bundle.valid, config, shuffle=False)
     test_loader = make_loader(bundle.test, config, shuffle=False)
     model = make_residual_model(variant_config, variant, bundle.input_dim, bundle.days, bundle.hours).to(device)
+    param_count = int(sum(parameter.numel() for parameter in model.parameters()))
     optimizer = torch.optim.AdamW(model.parameters(), lr=float(train_cfg["lr"]), weight_decay=float(train_cfg.get("weight_decay", 0.0)))
     amp_enabled = bool(train_cfg.get("amp", True)) and device.type == "cuda"
     scaler = torch.amp.GradScaler("cuda", enabled=amp_enabled)
@@ -1279,6 +1287,7 @@ def run_variant(config: dict[str, Any], variant: dict[str, Any], bundle, device:
     min_delta = float(train_cfg.get("early_stopping_min_delta", 0.0))
     epochs_without_improvement = 0
     stopped_epoch = 0
+    train_start = time.perf_counter()
     for epoch in range(1, int(train_cfg["epochs"]) + 1):
         train_losses = run_epoch(model, train_loader, variant_config, device, optimizer, f"{name} train {epoch}", scaler=scaler)
         valid_losses = run_epoch(model, valid_loader, variant_config, device, None, f"{name} valid {epoch}")
@@ -1303,6 +1312,8 @@ def run_variant(config: dict[str, Any], variant: dict[str, Any], bundle, device:
                     patience,
                 )
                 break
+    train_seconds = time.perf_counter() - train_start
+    logger.info("Training finished: params=%d epochs=%d seconds=%.1f", param_count, stopped_epoch, train_seconds)
     checkpoint = torch.load(best_path, map_location=device, weights_only=False)
     model.load_state_dict(checkpoint["model"])
     probes_enabled = bool(variant_config.get("probes", {}).get("enabled", True))
@@ -1326,7 +1337,15 @@ def run_variant(config: dict[str, Any], variant: dict[str, Any], bundle, device:
     if not bool(output_cfg.get("save_checkpoints", True)) and best_path.exists():
         best_path.unlink()
     write_json(out_dir / "metrics.json", metrics)
-    return {"name": name, "best_validation_score": best, "best_epoch": best_epoch, "stopped_epoch": stopped_epoch, **metrics}
+    return {
+        "name": name,
+        "best_validation_score": best,
+        "best_epoch": best_epoch,
+        "stopped_epoch": stopped_epoch,
+        "param_count": param_count,
+        "train_seconds": train_seconds,
+        **metrics,
+    }
 
 
 def run_residual_experiments(config_path: str) -> dict[str, Any]:

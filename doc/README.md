@@ -41,3 +41,4 @@
 | 2-Exp-38 | [2-Exp-38_empirical_vs_nn_epochs.md](2-Exp-38_empirical_vs_nn_epochs.md) | 経験的 ANOVA vs NN の窓内比較を学習量統制で再検証 |
 | 2-Exp-39 | [2-Exp-39_future_day_empirical_vs_nn.md](2-Exp-39_future_day_empirical_vs_nn.md) | 実データ未来日での経験的 ANOVA vs NN（学習量統制・5 seed） |
 | 2-Exp-40 | [2-Exp-40_jima_main_results.md](2-Exp-40_jima_main_results.md) | JIMA 主結果の確定（early stopping・フルスケール・主表 5 行） |
+| 2-Exp-45 | [2-Exp-45_day_hour_encoder_architecture.md](2-Exp-45_day_hour_encoder_architecture.md) | 日/時間帯 Encoder の GRU vs MLP 比較（パラメータ整合の対照つき・5 seed） |

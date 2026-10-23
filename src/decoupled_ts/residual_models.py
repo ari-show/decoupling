@@ -58,6 +58,8 @@ class ResidualMultiGrainAE(nn.Module):
         use_hour: bool = True,
         use_interaction: bool = False,
         dropout: float = 0.1,
+        day_encoder: str = "gru",
+        hour_encoder: str = "mlp",
     ):
         super().__init__()
         self.days = days
@@ -75,8 +77,8 @@ class ResidualMultiGrainAE(nn.Module):
 
         self.global_encoder = GlobalEncoder(input_dim, hidden_dim, global_dim)
         self.local_encoder = CellLocalEncoder(input_dim, hidden_dim, local_dim)
-        self.day_encoder = DayEncoder(input_dim, hidden_dim, day_dim)
-        self.hour_encoder = HourEncoder(input_dim, hidden_dim, hour_dim)
+        self.day_encoder = DayEncoder(input_dim, hidden_dim, day_dim, architecture=day_encoder)
+        self.hour_encoder = HourEncoder(input_dim, hidden_dim, hour_dim, architecture=hour_encoder)
         self.interaction_encoder = InteractionEncoder(day_dim, hour_dim, hidden_dim, interaction_dim)
         latent_dim = 0
         latent_dim += global_dim if use_global else 0
@@ -250,6 +252,8 @@ class OutputDecompositionResidualModel(nn.Module):
         dropout: float = 0.1,
         center_components: bool = True,
         use_interaction: bool = True,
+        day_encoder: str = "gru",
+        hour_encoder: str = "mlp",
     ):
         super().__init__()
         self.days = days
@@ -257,8 +261,8 @@ class OutputDecompositionResidualModel(nn.Module):
         self.center_components = center_components
         self.use_interaction = use_interaction
         self.global_encoder = GlobalEncoder(input_dim, hidden_dim, global_dim)
-        self.day_encoder = DayEncoder(input_dim, hidden_dim, day_dim)
-        self.hour_encoder = HourEncoder(input_dim, hidden_dim, hour_dim)
+        self.day_encoder = DayEncoder(input_dim, hidden_dim, day_dim, architecture=day_encoder)
+        self.hour_encoder = HourEncoder(input_dim, hidden_dim, hour_dim, architecture=hour_encoder)
         self.interaction_encoder = InteractionEncoder(day_dim, hour_dim, hidden_dim, interaction_dim)
         self.global_head = nn.Sequential(nn.Linear(global_dim, hidden_dim), nn.ReLU(), nn.Dropout(dropout), nn.Linear(hidden_dim, 1))
         self.day_head = nn.Sequential(nn.Linear(day_dim, hidden_dim), nn.ReLU(), nn.Dropout(dropout), nn.Linear(hidden_dim, 1))

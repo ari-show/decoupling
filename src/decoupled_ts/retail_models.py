@@ -52,36 +52,64 @@ class GlobalEncoder(nn.Module):
         return self.net(torch.cat([mean, torch.sqrt(var + 1e-6)], dim=-1))
 
 
-class DayEncoder(nn.Module):
-    def __init__(self, input_dim: int, hidden_dim: int, day_dim: int):
+AXIS_ENCODER_ARCHITECTURES = ("mlp", "mlp_wide", "gru")
+
+
+def axis_marginal_stats(grid: torch.Tensor, mask: torch.Tensor, reduce_dim: int) -> torch.Tensor:
+    """Observed mean and std of one grid axis, with the other axis reduced away."""
+    denom = mask.sum(dim=reduce_dim).clamp_min(1.0)
+    mean = (grid * mask).sum(dim=reduce_dim) / denom
+    var = ((grid - mean.unsqueeze(reduce_dim)).pow(2) * mask).sum(dim=reduce_dim) / denom
+    return torch.cat([mean, torch.sqrt(var + 1e-6)], dim=-1)
+
+
+class AxisEncoder(nn.Module):
+    """Per-step encoder over one grid axis with a selectable mixing block.
+
+    `architecture` controls what sits between the per-step projection and the latent head:
+
+    - `mlp`: nothing, so each step is encoded from its own marginal statistics only.
+    - `mlp_wide`: a position-wise MLP whose width matches the GRU parameter count.
+    - `gru`: a unidirectional GRU, so step t also sees steps before t.
+    """
+
+    def __init__(self, input_dim: int, hidden_dim: int, latent_dim: int, reduce_dim: int, architecture: str):
         super().__init__()
+        if architecture not in AXIS_ENCODER_ARCHITECTURES:
+            raise ValueError(f"unknown axis encoder architecture: {architecture}")
+        self.reduce_dim = reduce_dim
+        self.architecture = architecture
         self.proj = nn.Sequential(nn.Linear(input_dim * 2, hidden_dim), nn.ReLU())
-        self.rnn = nn.GRU(hidden_dim, hidden_dim, batch_first=True)
-        self.head = nn.Linear(hidden_dim, day_dim)
+        self.rnn = nn.GRU(hidden_dim, hidden_dim, batch_first=True) if architecture == "gru" else None
+        if architecture == "mlp_wide":
+            width = hidden_dim * 3
+            self.mlp = nn.Sequential(
+                nn.Linear(hidden_dim, width),
+                nn.ReLU(),
+                nn.Linear(width, hidden_dim),
+                nn.ReLU(),
+            )
+        else:
+            self.mlp = None
+        self.head = nn.Linear(hidden_dim, latent_dim)
 
     def forward(self, grid: torch.Tensor, mask: torch.Tensor) -> torch.Tensor:
-        denom = mask.sum(dim=2).clamp_min(1.0)
-        mean = (grid * mask).sum(dim=2) / denom
-        var = ((grid - mean[:, :, None, :]).pow(2) * mask).sum(dim=2) / denom
-        h = self.proj(torch.cat([mean, torch.sqrt(var + 1e-6)], dim=-1))
-        out, _ = self.rnn(h)
-        return self.head(out)
+        h = self.proj(axis_marginal_stats(grid, mask, self.reduce_dim))
+        if self.rnn is not None:
+            h, _ = self.rnn(h)
+        elif self.mlp is not None:
+            h = self.mlp(h)
+        return self.head(h)
 
 
-class HourEncoder(nn.Module):
-    def __init__(self, input_dim: int, hidden_dim: int, hour_dim: int):
-        super().__init__()
-        self.net = nn.Sequential(
-            nn.Linear(input_dim * 2, hidden_dim),
-            nn.ReLU(),
-            nn.Linear(hidden_dim, hour_dim),
-        )
+class DayEncoder(AxisEncoder):
+    def __init__(self, input_dim: int, hidden_dim: int, day_dim: int, architecture: str = "gru"):
+        super().__init__(input_dim, hidden_dim, day_dim, reduce_dim=2, architecture=architecture)
 
-    def forward(self, grid: torch.Tensor, mask: torch.Tensor) -> torch.Tensor:
-        denom = mask.sum(dim=1).clamp_min(1.0)
-        mean = (grid * mask).sum(dim=1) / denom
-        var = ((grid - mean[:, None, :, :]).pow(2) * mask).sum(dim=1) / denom
-        return self.net(torch.cat([mean, torch.sqrt(var + 1e-6)], dim=-1))
+
+class HourEncoder(AxisEncoder):
+    def __init__(self, input_dim: int, hidden_dim: int, hour_dim: int, architecture: str = "mlp"):
+        super().__init__(input_dim, hidden_dim, hour_dim, reduce_dim=1, architecture=architecture)
 
 
 class CellLocalEncoder(nn.Module):
