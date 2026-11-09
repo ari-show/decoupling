@@ -1,0 +1,17 @@
+{
+  "name": "presen-jima2026fall-slidev",
+  "private": true,
+  "scripts": {
+    "dev": "slidev slides.md --open",
+    "build": "slidev build slides.md",
+    "export": "slidev export slides.md --output ../JIMA2026秋_draft.pdf",
+    "export:png": "slidev export slides.md --format png --output ../png",
+    "export:svg": "node scripts/export-svg.mjs"
+  },
+  "devDependencies": {
+    "@slidev/cli": "^0.50.0",
+    "@slidev/theme-default": "^0.25.0",
+    "dom-to-svg": "^0.12.2",
+    "playwright-core": "^1.64.1"
+  }
+}
