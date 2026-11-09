@@ -6,7 +6,36 @@
 [2-Exp-37_hyperparameter_sensitivity.md](2-Exp-37_hyperparameter_sensitivity.md)、
 [2-Exp-38_empirical_vs_nn_epochs.md](2-Exp-38_empirical_vs_nn_epochs.md)、
 [2-Exp-39_future_day_empirical_vs_nn.md](2-Exp-39_future_day_empirical_vs_nn.md)、
-[2-Exp-34_fullscale_empirical_and_log.md](2-Exp-34_fullscale_empirical_and_log.md)
+[2-Exp-34_fullscale_empirical_and_log.md](2-Exp-34_fullscale_empirical_and_log.md)、
+[2-Exp-46_epoch_budget_component_stability.md](2-Exp-46_epoch_budget_component_stability.md)、
+[2-Exp-48_main_table_long_budget.md](2-Exp-48_main_table_long_budget.md)
+
+## 訂正（2026-11-09 追記。根拠は 2026-10-23 の 2-Exp-46 / 2-Exp-48）
+
+**本実験の「early stopping により学習量問題は解消された／主結果は収束後の数値である」
+という記述は誤りである。**`patience 8` で停止した時点の数値であり、収束点ではない。
+
+| 実験 | 予算 | centered の `corrected_cell_mae` | 上限到達 |
+|---|---|---:|---|
+| 本実験 | 60 / patience 8 | 0.04828 ± 0.00032 | stopped 23〜59（到達なし） |
+| [2-Exp-46](2-Exp-46_epoch_budget_component_stability.md) | 120 / patience 16 | 0.04698 ± 0.00049 | 5 run 中 3 run |
+| [2-Exp-48](2-Exp-48_main_table_long_budget.md) | 240 / patience 24 | 0.04679 ± 0.00055 | 5 run 中 4 run |
+
+`stopped_epoch < 60` は満たされていたが、それは「これ以上改善しない」ことを意味しない。
+予算を増やせば patience も伸び、MAE はさらに改善し続ける。
+
+影響範囲は次の 2 点である。
+
+1. **「収束後」という限定はすべて「patience 8 の早期終了時点」に読み替える。**
+   本文では以下を訂正した: 成功条件 1 の推論、照合 1・2、読み取り 2・4・5。
+2. **JIMA-01 の効果量は学習量とセットで示す必要がある。**
+   centered − no_center は 60/8 で −0.00594、240/24 で **−0.00153**（いずれも 5 seed 全勝）。
+   no_center 自体が 0.05422 → 0.04832 と改善するため、
+   60/8 で見えていた差の大部分は no_center 側の学習不足だった。
+   向きと全勝は不変だが、**60/8 の −0.0059 だけを示して「性能でも大きく有利」と書くのは過大**である。
+
+主表の数値そのものは 2-Exp-48 の事前条件 5（240 でも未収束なら採用しない）により、
+本実験の 60/8 版を据え置く。提出済みの JIMA 予稿と一致させるためでもある。
 
 ## 背景
 
@@ -26,7 +55,7 @@
 - Exp-34 系（6000/1500、train_holdout、12 epoch）: 0.0697 → 0.0516
 
 これらはすべて 12 epoch の学習不足を抱えており、そのまま主表に使えない。
-本実験は、学習量問題を early stopping で解消した上で、
+本実験は、学習量問題を early stopping で抑えた上で、
 主表（JIMA-01/02）に載せる数値をフルスケール設定で一括取得する。
 
 ## 実装（本 PR に含むコード変更）
@@ -83,7 +112,7 @@ Exp-34 のフルスケール設定を基礎とする。
 | `high_residual_top10_corrected_mae` | 外れケース行 |
 | `corrected_cell_bias` | 系統誤差行 |
 | `calibrated_corrected_cell_*` | calibration 行（raw と分離） |
-| `best_epoch` / `stopped_epoch` | early stopping の発火確認（学習不足解消の証拠） |
+| `best_epoch` / `stopped_epoch` | early stopping の発火確認（打ち切り位置の記録。収束の証拠ではない → 訂正節） |
 | 中心化違反系（`component_*_mean_abs`） | centered / no_center の対比 |
 
 ## 事前に定める成功条件・分岐
@@ -92,6 +121,12 @@ Exp-34 のフルスケール設定を基礎とする。
    自動停止）かつ `best_epoch < stopped_epoch`。これが満たされれば
    「主結果は収束後の数値」と主張できる。満たされない run があれば epoch 上限を
    引き上げて再実行する。
+
+   > **この推論は誤りだった**（2026-11-09 訂正）。`stopped_epoch < 60` は
+   > 「patience 8 の範囲で改善が止まった」ことしか意味せず、収束の証拠にならない。
+   > 予算を 120 / 240 に伸ばすと patience も伸び、MAE は改善し続けた。
+   > 条件の判定（下記「照合」）自体は有効だが、そこから導ける主張は
+   > 「上限張り付きを避けられた」までである。詳細は冒頭の訂正節。
 2. **JIMA-01**: `output_decomp_centered` が `output_decomp_no_center` を
    corrected MAE の paired 比較で 5 seed 中 4 以上上回る（Exp-32 系の再確認）。
 3. **採用次元の確定**: dim4 と dim10 の corrected MAE 差が 0.001 以内なら
@@ -137,7 +172,8 @@ baseline（`series_mean`）cell MAE は 0.06966、top10 baseline MAE は 0.27883
 ### early stopping の発火状況（成功条件 1）
 
 - **dim10: 全 NN run が上限 60 の手前で patience により停止**（stopped 23〜59、
-  best epoch 15〜51）。学習量問題は解消された。
+  best epoch 15〜51）。上限張り付きは避けられた
+  （当時は「学習量問題は解消された」と書いたが、これは誤り → 冒頭の訂正節）。
 - dim4: centered の seed 23/59 が上限 60 に到達（best epoch 58 / 53）、
   no_center の seed 17 は best epoch 60 で改善が続いたまま上限到達。
   dim4 は収束の確認が 5 seed 中 2〜3 seed で不完全である。
@@ -166,9 +202,11 @@ no_center 0.05866 ± 0.00614（不安定）。
 
 ### 事前に定めた成功条件との照合
 
-1. **学習量の解消**: dim10 は全 run で満たした。dim4 は 2〜3 run で上限到達し不完全。
+1. **上限張り付きの回避**: dim10 は全 run で満たした。dim4 は 2〜3 run で上限到達し不完全。
+   ただしこれは収束の確認ではない（→ 冒頭の訂正節）。
 2. **JIMA-01 ✓**: centered が no_center を両 scenario で 5 seed 全勝
-   （dim10 で -0.00594）。中心化の効果は収束後もむしろ大きくなった。
+   （dim10 で -0.00594）。この効果量は `patience 8` 時点のもので、
+   240 / patience 24 では -0.00153 に縮む（5 seed 全勝は不変、2-Exp-48）。
 3. **採用次元**: 事前規則 3（差 0.001 以内なら dim4）だけを見れば dim4 だが、
    規則 1（全 run の収束確認）を dim4 は満たさない。規則 1 を優先し、
    **主表は dim10（10/10/10/8）を採用**する。dim4 は「差 +0.00045 で同等」という
@@ -182,18 +220,26 @@ no_center 0.05866 ± 0.00614（不安定）。
    （改善率 **30.7%**）。従来候補（Exp-32 系 0.0583、Exp-34 系 0.0516）より明確に良く、
    seed 間 SD も ±0.0003 と小さい。12 epoch の学習不足がすべての旧数値を
    劣化させていたことが確定した。
-2. **中心化あり/なし（JIMA-01）**: 収束後の no_center は 0.05422 で empirical と同水準まで
-   しか到達せず、centered は -0.0059 の明確な差をつけた。「中心化は解釈のためだけでなく、
-   収束後の予測性能でも有利」という強い形で主表に書ける。
+2. **中心化あり/なし（JIMA-01）**: `patience 8` 時点の no_center は 0.05422 で
+   empirical と同水準にとどまり、centered は -0.0059 の差をつけた。
+
+   > **この読み取りは予算依存である**（2026-11-09 訂正）。240 / patience 24 では
+   > no_center 自体が 0.04832 まで改善して empirical（0.05443）を明確に下回り、
+   > centered との差は -0.00153 に縮む。向きと 5 seed 全勝は両予算で不変。
+   > したがって主表に書けるのは「中心化は予測性能でも有利だが、その差は
+   > 学習量を増やすと縮む。中心化の主たる価値は解釈（成分の担当範囲の固定）である」
+   > という形までで、「収束後の予測性能でも有利」という強い形では書けない。
 3. **empirical との関係（ladder）**: centered は empirical を 5 seed 全勝（-0.0062）。
    Exp-38/39 のフルスケール版として整合。top10 は依然 empirical が最良（0.1794 vs 0.1942）で、
    無偏性も empirical のみが持つ。相補性の構図は主表にそのまま現れている。
-4. **calibration は収束後には不要**: MAE-grid calibration は 10 run 中 9 run で
+4. **calibration は予算を伸ばしても効かない**: MAE-grid calibration は 10 run 中 9 run で
    α = 1.0（恒等）を選択し、MAE をわずかに悪化させた（+0.0005）。
    Exp-37（12 epoch）で見えた calibration の効果は学習不足の補償だったと解釈できる。
-   主表の主数値は raw とし、calibration 行は「収束後は較正の余地がない」ことの
-   証拠として載せる。
-5. **残る課題は bias**: centered の bias -0.263 は収束後も残る。無 bias が必要な
+   主表の主数値は raw とし、calibration 行は「十分に学習させた後では較正の余地がない」
+   ことの証拠として載せる。240 / patience 24 でも +0.0004 で同じ向きであり
+   （2-Exp-48）、この読み取りは予算に依らない。
+5. **残る課題は bias**: centered の bias -0.263 は `patience 8` 時点で残る
+   （240 / patience 24 でも -0.237 で、予算を伸ばしても消えない。2-Exp-48）。無 bias が必要な
    運用では、Exp-19 の bias 制約付き calibration または Exp-37 で確認した
    損失側 bias 制約（weight 0.01 で bias 半減、MAE +0.0015）を併用する。
    この trade-off は limitation として本文に明記する。
@@ -207,3 +253,11 @@ no_center 0.05866 ± 0.00614（不安定）。
 - 旧数値（0.0583 / 0.0516 / 0.0501）を引く既存記述はすべて本表へ差し替え、
   Exp-33/34 の empirical 比較の記述は Exp-38/39 の学習量統制版と併せて更新する。
 - 次元は「10/10/10/8（感度分析 2-Exp-36 と本実験 dim4 対照により裏づけ）」と記述する。
+- **学習条件の書き方**（2026-11-09 追記）: 主表の数値は「epochs 上限 60・
+  `patience 8` による早期終了時点」と書く。「収束後」とは書かない。
+  limitation に「予算を 240 まで伸ばすと centered は 0.04679、no_center は 0.04832 まで
+  改善し、上限到達が続く（2-Exp-46 / 2-Exp-48）」を明記する。
+- **JIMA-01 の効果量**（2026-11-09 追記）: 60/8 で -0.00594、240/24 で -0.00153、
+  いずれも 5 seed 全勝。両方を併記し、中心化の主たる価値は解釈にあるという形にする。
+- empirical との相補性（top10 と無 bias は empirical が優位）は両予算で不変なので、
+  本節の記述のまま使える（2-Exp-48）。
