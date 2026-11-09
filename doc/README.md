@@ -44,3 +44,4 @@
 | 2-Exp-41 | [2-Exp-41_direct_vs_residual_output_decomp.md](2-Exp-41_direct_vs_residual_output_decomp.md) | 直接 y 予測版 output decomposition vs 残差版（分水嶺 A、H-A1） |
 | 2-Exp-42 | [2-Exp-42_unified_architecture_ladder.md](2-Exp-42_unified_architecture_ladder.md) | 統一アーキテクチャ ladder: 共有 backbone / 1Enc+1Dec+射影の非劣性（分水嶺 B、H-B1） |
 | 2-Exp-43 | [2-Exp-43_future_covariate_masking.md](2-Exp-43_future_covariate_masking.md) | 未来日評価で天候（実測値）を隠し、2-Exp-39/42 の未来日主張を先読みなしで再検証 |
+| 2-Exp-44 | [2-Exp-44_component_interpretation.md](2-Exp-44_component_interpretation.md) | 主結果条件での成分解釈（分散寄与・bias 帰属・共変量応答・低ランク性） |
