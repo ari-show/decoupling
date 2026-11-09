@@ -107,6 +107,57 @@ def summarize_shape(epochs: list[int], ratios: list[float],
     }
 
 
+def decompose(curve: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Attribute each interval's change in ratio to numerator vs denominator.
+
+    Since ratio = abs_sum / joint, exactly
+
+        dlog(ratio) = dlog(abs_sum) - dlog(joint)
+
+    so a rise driven by dlog(abs_sum) > 0 means the components themselves grew
+    (cancellation was acquired), while a rise driven by dlog(joint) < 0 means the
+    prediction shrank and the ratio rose for a trivial reason. Both can fall at
+    once, in which case the sign of the ratio change says only which fell faster
+    - that is not acquired cancellation either.
+
+    Criterion contributed by the 2-Exp-56 session.
+    """
+    import math
+
+    out: list[dict[str, Any]] = []
+    for prev, cur in zip(curve, curve[1:]):
+        if min(prev["abs_sum_mean"], cur["abs_sum_mean"],
+               prev["joint_mean"], cur["joint_mean"]) <= 0:
+            continue
+        d_num = math.log(cur["abs_sum_mean"]) - math.log(prev["abs_sum_mean"])
+        d_den = math.log(cur["joint_mean"]) - math.log(prev["joint_mean"])
+        d_ratio = math.log(cur["ratio_mean"]) - math.log(prev["ratio_mean"])
+        # Shares of the ratio change are unstable when dlog(ratio) is near zero,
+        # so report the criterion directly instead: a rise counts as acquired
+        # cancellation only if the components themselves grew.
+        direction = "rise" if d_ratio > 0 else ("fall" if d_ratio < 0 else "flat")
+        components_grew = d_num > 0
+        if d_ratio == 0:
+            verdict = "flat"
+        elif d_ratio > 0:
+            verdict = ("rise, components grew" if components_grew
+                       else "rise, components did NOT grow")
+            if d_num > 0 and d_den > 0:
+                verdict += " (both up, numerator faster)"
+            elif d_num <= 0 and d_den < 0:
+                verdict += " (both down, denominator faster)"
+        else:
+            verdict = "fall"
+        out.append({"epoch_from": prev["epoch"], "epoch_to": cur["epoch"],
+                    "dlog_ratio": d_ratio, "dlog_abs_sum": d_num,
+                    "dlog_joint": d_den,
+                    "direction": direction, "components_grew": components_grew,
+                    "acquired": bool(d_ratio > 0 and components_grew),
+                    "identity_residual": d_ratio - (d_num - d_den),
+                    "verdict": verdict})
+    return out
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--run-dir", required=True,
@@ -147,17 +198,20 @@ def main() -> None:
             aggregate.append(entry)
 
     shapes: dict[str, Any] = {}
+    intervals: dict[str, Any] = {}
     for label in VARIANTS.values():
         curve = [e for e in aggregate if e["variant"] == label]
         shapes[label] = summarize_shape([e["epoch"] for e in curve],
                                         [e["ratio_mean"] for e in curve],
                                         [e["joint_mean"] for e in curve])
+        intervals[label] = decompose(curve)
 
     out_dir = Path(args.out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
     (out_dir / "cancellation_history.json").write_text(json.dumps(
         {"run_dir": str(run_dir), "label": args.label, "rows": rows,
-         "aggregate": aggregate, "shape": shapes}, indent=1, ensure_ascii=False))
+         "aggregate": aggregate, "shape": shapes, "intervals": intervals},
+        indent=1, ensure_ascii=False))
     fields = sorted({k for e in aggregate for k in e})
     with (out_dir / "cancellation_history.csv").open("w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=fields)
@@ -185,6 +239,20 @@ def main() -> None:
               f"monotone_falling={s['monotone_falling']}")
         print(f"  |Sc| at peak / final = {s['joint_at_peak_over_final']:.2f}"
               f"   (well below 1 means the peak is a small-denominator artifact)")
+        iv = intervals[label]
+        if iv:
+            print(f"  {'interval':>13s} {'dlog ratio':>11s} {'dlog S|c|':>10s} "
+                  f"{'dlog |Sc|':>10s}  attribution")
+            for d in iv:
+                print(f"  {d['epoch_from']:>5d}->{d['epoch_to']:<6d} "
+                      f"{d['dlog_ratio']:>+11.4f} {d['dlog_abs_sum']:>+10.4f} "
+                      f"{d['dlog_joint']:>+10.4f}  {d['verdict']}")
+            worst = max(abs(d["identity_residual"]) for d in iv)
+            print(f"  identity check max |dlog(r) - (dlog(S|c|) - dlog(|Sc|))| = {worst:.2e}")
+            acq = [d for d in iv if d["acquired"]]
+            spans = ", ".join(str(d["epoch_from"]) + "->" + str(d["epoch_to"]) for d in acq)
+            print(f"  intervals counting as acquired cancellation: "
+                  f"{len(acq)}/{len(iv)}" + (f"  ({spans})" if acq else ""))
 
     print(f"\nwrote cancellation history analysis to {out_dir}")
 
