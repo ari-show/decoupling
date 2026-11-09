@@ -49,3 +49,4 @@
 | 2-Exp-46 | [2-Exp-46_epoch_budget_component_stability.md](2-Exp-46_epoch_budget_component_stability.md) | 成分解釈の学習量依存性（epochs 120 / patience 16 と 60 の対照） |
 | 2-Exp-47 | [2-Exp-47_component_combination_views.md](2-Exp-47_component_combination_views.md) | 日成分（量）× 交互作用成分（形）の組み合わせ可視化 |
 | 2-Exp-48 | [2-Exp-48_main_table_long_budget.md](2-Exp-48_main_table_long_budget.md) | 主表 4 variant を epochs 240 / patience 24 で取り直し、収束と効果量を再確認 |
+| 2-Exp-49 | [2-Exp-49_masked_day_training.md](2-Exp-49_masked_day_training.md) | 日のランダムマスク学習が短履歴推定・移植性・隠した日の day 成分に与える効果 |

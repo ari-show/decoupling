@@ -1,0 +1,67 @@
+{
+  "criteria": {
+    "history_k": 7,
+    "min_seeds_latent_beats_shrunk": 3,
+    "transfer_gain_vs_control_pct": 5.0,
+    "transfer_min_win_rate": 0.97,
+    "hidden_day_min_corr": 0.3,
+    "max_corrected_mae_regression_pct": 3.0
+  },
+  "variants": {
+    "M0_no_masking": {
+      "seeds_latent_beats_shrunk": 0,
+      "criterion_1_short_history": false,
+      "transfer_gain_vs_control_pct": 0.0,
+      "transfer_win_rate": 0.9716,
+      "criterion_2_transfer": false,
+      "hidden_day_corr": 0.0119,
+      "criterion_3_hidden_day": false,
+      "corrected_mae_regression_pct": 0.0,
+      "criterion_4_no_regression": true
+    },
+    "M1_random50_loss_all": {
+      "seeds_latent_beats_shrunk": 3,
+      "criterion_1_short_history": true,
+      "transfer_gain_vs_control_pct": -1.37,
+      "transfer_win_rate": 0.8934,
+      "criterion_2_transfer": false,
+      "hidden_day_corr": 0.1368,
+      "criterion_3_hidden_day": false,
+      "corrected_mae_regression_pct": 5.35,
+      "criterion_4_no_regression": false
+    },
+    "M1_random50_loss_all_no_center": {
+      "seeds_latent_beats_shrunk": 0,
+      "criterion_1_short_history": false,
+      "transfer_gain_vs_control_pct": -1.98,
+      "transfer_win_rate": 0.7792,
+      "criterion_2_transfer": false,
+      "hidden_day_corr": 0.0417,
+      "criterion_3_hidden_day": false,
+      "corrected_mae_regression_pct": 11.98,
+      "criterion_4_no_regression": false
+    },
+    "M2_random50_loss_visible": {
+      "seeds_latent_beats_shrunk": 0,
+      "criterion_1_short_history": false,
+      "transfer_gain_vs_control_pct": -1.72,
+      "transfer_win_rate": 0.9613,
+      "criterion_2_transfer": false,
+      "hidden_day_corr": 0.0264,
+      "criterion_3_hidden_day": false,
+      "corrected_mae_regression_pct": 1.6,
+      "criterion_4_no_regression": true
+    },
+    "M3_tail7_loss_all": {
+      "seeds_latent_beats_shrunk": 3,
+      "criterion_1_short_history": true,
+      "transfer_gain_vs_control_pct": -0.31,
+      "transfer_win_rate": 0.9368,
+      "criterion_2_transfer": false,
+      "hidden_day_corr": 0.0529,
+      "criterion_3_hidden_day": false,
+      "corrected_mae_regression_pct": 2.39,
+      "criterion_4_no_regression": true
+    }
+  }
+}

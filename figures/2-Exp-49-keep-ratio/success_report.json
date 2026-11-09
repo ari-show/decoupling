@@ -1,0 +1,24 @@
+{
+  "criteria": {
+    "history_k": 7,
+    "min_seeds_latent_beats_shrunk": 3,
+    "transfer_gain_vs_control_pct": 5.0,
+    "transfer_min_win_rate": 0.97,
+    "hidden_day_min_corr": 0.3,
+    "max_corrected_mae_regression_pct": 3.0
+  },
+  "variants": {
+    "M1_random25_loss_all": {
+      "seeds_latent_beats_shrunk": 2,
+      "criterion_1_short_history": false,
+      "hidden_day_corr": 0.0816,
+      "criterion_3_hidden_day": false
+    },
+    "M1_random75_loss_all": {
+      "seeds_latent_beats_shrunk": 0,
+      "criterion_1_short_history": false,
+      "hidden_day_corr": 0.0739,
+      "criterion_3_hidden_day": false
+    }
+  }
+}
