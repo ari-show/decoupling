@@ -292,6 +292,7 @@ synthetic では interaction の必要性を確認できたが、FreshRetailNet 
 - [experiments.md](experiments.md): 論文レベルに必要な実験一覧
 - [schedule.md](schedule.md): 実験と執筆のスケジュール
 - [risks.md](risks.md): 失敗パターンと縮退案
+- [../thesis/](../thesis/README.md): 修論用の従来研究の系譜と参考文献 97 件（related work 章の段落設計つき）
 
 ## 現時点の結論
 
