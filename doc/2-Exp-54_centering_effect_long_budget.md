@@ -112,8 +112,27 @@ patience は 2-Exp-46 の 16、2-Exp-48 の 24 と同じ比率（上限の 1/10�
 - **P1 内部対照（軌跡の重なり）**: 各 run の `history.jsonl` の `valid_loss_residual_reconstruction` が、
   2-Exp-48 の同一 seed・同一 variant の系列と、2-Exp-48 の `stopped_epoch` までほぼ一致する。
   予算以外を変えていないので、学習軌跡は途中まで同一になるはずである。
-  （`cudnn.benchmark = True` と AMP を使うため bit 一致は保証しないが、
-  2-Exp-46 の `epochs60` が 2-Exp-44 と全指標一致した実績があり、同一機では再現する。）
+
+  同一条件の再現性については根拠が 2 つある。1 つは 2-Exp-46 の `epochs60` が 2-Exp-44 と
+  全指標一致したこと。もう 1 つは 2-Exp-53（基準値診断。別ブランチで進行中、doc は未マージ）の
+  `series_mean` scenario を 2-Exp-48 の `dim10` scenario と突き合わせた結果である。
+
+  | variant | 2-Exp-53 | 2-Exp-48 | 差 |
+  |---|---:|---:|---:|
+  | `empirical_anova_main_effects` | 0.05443 ± 0.00000 | 0.05443 ± 0.00000 | +0.00000 |
+  | `output_decomp_no_center` | 0.04832 ± 0.00107 | 0.04832 ± 0.00107 | +0.00000 |
+  | `output_decomp_centered` | 0.04679 ± 0.00055 | 0.04679 ± 0.00055 | +0.00000 |
+
+  `corrected_cell_mae` の mean と std が両方一致しているので、平均が偶然合ったのではなく
+  seed ごとに再現している。`baseline_cell_mae` 0.06966、`diag_hour_relative_amplitude` 0.54176、
+  `diag_day_relative_amplitude` 0.12352 も一致した。2-Exp-48 は競合なしの別時刻に回した実験なので、
+  同一機・同一 seed なら集約指標が再現することの直接の証拠になる。
+
+  **ただしこれは集約指標レベルでの一致であり、bit 一致の確認ではない。**
+  `corrected_cell_mae` は観測セル平均なので、kernel 選択の揺れがあっても丸めで消え得る。
+  `cudnn.benchmark = True` と AMP を使う以上、epoch 単位の loss では一致幅が緩くなる可能性がある。
+  P1 の判定は集約指標ではなく `history.jsonl` を直接突き合わせて行い、
+  採用した許容幅（および一致が崩れた epoch 位置）を結果節に明示する。
 - **P2 centered は上限を脱する**: 上限 480 到達が 0〜2 / 5 に減る。
   240 では 4/5、120 では 3/5 だったので、増える方向には出ないと予測する。
 - **P3 no_center は patience の緩和で改善する**: 2-Exp-48 で patience 24 停止だった
