@@ -51,3 +51,4 @@
 | 2-Exp-48 | [2-Exp-48_main_table_long_budget.md](2-Exp-48_main_table_long_budget.md) | 主表 4 variant を epochs 240 / patience 24 で取り直し、収束と効果量を再確認 |
 | 2-Exp-49 | [2-Exp-49_masked_day_training.md](2-Exp-49_masked_day_training.md) | 日のランダムマスク学習が短履歴推定・移植性・隠した日の day 成分に与える効果 |
 | 2-Exp-50 | [2-Exp-50_latent_swap_counterfactual.md](2-Exp-50_latent_swap_counterfactual.md) | 潜在表現の差し替えによる軸間の漏れ量（中心化出力分解 / 中心化なし / 潜在分割） |
+| 2-Exp-51 | [2-Exp-51_prospective_screening.md](2-Exp-51_prospective_screening.md) | 適用対象の事前スクリーニング（過去窓→将来窓、未来日マスク条件） |
