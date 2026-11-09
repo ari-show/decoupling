@@ -1,0 +1,576 @@
+{
+ "rows": [
+  {
+   "budget": "60/8",
+   "source": "2-Exp-44",
+   "variant": "centered",
+   "seed": 17,
+   "abs_sum": 0.07438433063075682,
+   "joint": 0.04449410238395336,
+   "ratio": 1.6717795538130298
+  },
+  {
+   "budget": "60/8",
+   "source": "2-Exp-44",
+   "variant": "centered",
+   "seed": 23,
+   "abs_sum": 0.0678341664331994,
+   "joint": 0.03955107386506171,
+   "ratio": 1.7151030251323256
+  },
+  {
+   "budget": "60/8",
+   "source": "2-Exp-44",
+   "variant": "centered",
+   "seed": 31,
+   "abs_sum": 0.06573167060790323,
+   "joint": 0.04027137735567813,
+   "ratio": 1.6322180894723057
+  },
+  {
+   "budget": "60/8",
+   "source": "2-Exp-44",
+   "variant": "centered",
+   "seed": 47,
+   "abs_sum": 0.07214676804075444,
+   "joint": 0.04230954538560859,
+   "ratio": 1.7052125562496554
+  },
+  {
+   "budget": "60/8",
+   "source": "2-Exp-44",
+   "variant": "centered",
+   "seed": 59,
+   "abs_sum": 0.0695109419969388,
+   "joint": 0.04042049128443425,
+   "ratio": 1.7196956243752326
+  },
+  {
+   "budget": "60/8",
+   "source": "2-Exp-44",
+   "variant": "no_center",
+   "seed": 17,
+   "abs_sum": 0.2421342839556824,
+   "joint": 0.02887542052807893,
+   "ratio": 8.385480783569093
+  },
+  {
+   "budget": "60/8",
+   "source": "2-Exp-44",
+   "variant": "no_center",
+   "seed": 23,
+   "abs_sum": 0.07697601960273635,
+   "joint": 0.02675156498773262,
+   "ratio": 2.8774398670894583
+  },
+  {
+   "budget": "60/8",
+   "source": "2-Exp-44",
+   "variant": "no_center",
+   "seed": 31,
+   "abs_sum": 0.14004948148657706,
+   "joint": 0.0439332786952918,
+   "ratio": 3.1877766842287993
+  },
+  {
+   "budget": "60/8",
+   "source": "2-Exp-44",
+   "variant": "no_center",
+   "seed": 47,
+   "abs_sum": 0.14607898843078448,
+   "joint": 0.01993902180256757,
+   "ratio": 7.32628660910405
+  },
+  {
+   "budget": "60/8",
+   "source": "2-Exp-44",
+   "variant": "no_center",
+   "seed": 59,
+   "abs_sum": 0.14498734555963932,
+   "joint": 0.027968463921640315,
+   "ratio": 5.183958116750803
+  },
+  {
+   "budget": "60/8",
+   "source": "2-Exp-46",
+   "variant": "centered",
+   "seed": 17,
+   "abs_sum": 0.07438433063075682,
+   "joint": 0.04449410238395336,
+   "ratio": 1.6717795538130298
+  },
+  {
+   "budget": "60/8",
+   "source": "2-Exp-46",
+   "variant": "centered",
+   "seed": 23,
+   "abs_sum": 0.0678341664331994,
+   "joint": 0.03955107386506171,
+   "ratio": 1.7151030251323256
+  },
+  {
+   "budget": "60/8",
+   "source": "2-Exp-46",
+   "variant": "centered",
+   "seed": 31,
+   "abs_sum": 0.06573167060790323,
+   "joint": 0.04027137735567813,
+   "ratio": 1.6322180894723057
+  },
+  {
+   "budget": "60/8",
+   "source": "2-Exp-46",
+   "variant": "centered",
+   "seed": 47,
+   "abs_sum": 0.07214676804075444,
+   "joint": 0.04230954538560859,
+   "ratio": 1.7052125562496554
+  },
+  {
+   "budget": "60/8",
+   "source": "2-Exp-46",
+   "variant": "centered",
+   "seed": 59,
+   "abs_sum": 0.0695109419969388,
+   "joint": 0.04042049128443425,
+   "ratio": 1.7196956243752326
+  },
+  {
+   "budget": "120/16",
+   "source": "2-Exp-46",
+   "variant": "centered",
+   "seed": 17,
+   "abs_sum": 0.07434047748175915,
+   "joint": 0.04341828374729858,
+   "ratio": 1.7121929073574793
+  },
+  {
+   "budget": "120/16",
+   "source": "2-Exp-46",
+   "variant": "centered",
+   "seed": 23,
+   "abs_sum": 0.07054394512275561,
+   "joint": 0.039841477391834336,
+   "ratio": 1.7706156935137616
+  },
+  {
+   "budget": "120/16",
+   "source": "2-Exp-46",
+   "variant": "centered",
+   "seed": 31,
+   "abs_sum": 0.0697202216083498,
+   "joint": 0.04068464999385408,
+   "ratio": 1.7136738700930672
+  },
+  {
+   "budget": "120/16",
+   "source": "2-Exp-46",
+   "variant": "centered",
+   "seed": 47,
+   "abs_sum": 0.07214676804075444,
+   "joint": 0.04230954538560859,
+   "ratio": 1.7052125562496554
+  },
+  {
+   "budget": "120/16",
+   "source": "2-Exp-46",
+   "variant": "centered",
+   "seed": 59,
+   "abs_sum": 0.0696420261470761,
+   "joint": 0.04024224018818078,
+   "ratio": 1.7305703117275784
+  },
+  {
+   "budget": "240/24",
+   "source": "2-Exp-48",
+   "variant": "centered",
+   "seed": 17,
+   "abs_sum": 0.07420703686772313,
+   "joint": 0.04356476046762085,
+   "ratio": 1.7033730031151417
+  },
+  {
+   "budget": "240/24",
+   "source": "2-Exp-48",
+   "variant": "centered",
+   "seed": 23,
+   "abs_sum": 0.07196708196750462,
+   "joint": 0.04107809812023222,
+   "ratio": 1.751957497079414
+  },
+  {
+   "budget": "240/24",
+   "source": "2-Exp-48",
+   "variant": "centered",
+   "seed": 31,
+   "abs_sum": 0.0682500870933476,
+   "joint": 0.03963476745374979,
+   "ratio": 1.7219752121162137
+  },
+  {
+   "budget": "240/24",
+   "source": "2-Exp-48",
+   "variant": "centered",
+   "seed": 47,
+   "abs_sum": 0.07488411186690527,
+   "joint": 0.04254167037218606,
+   "ratio": 1.7602532108345432
+  },
+  {
+   "budget": "240/24",
+   "source": "2-Exp-48",
+   "variant": "centered",
+   "seed": 59,
+   "abs_sum": 0.0718077561003262,
+   "joint": 0.04079600885655998,
+   "ratio": 1.7601662052972997
+  },
+  {
+   "budget": "240/24",
+   "source": "2-Exp-48",
+   "variant": "no_center",
+   "seed": 17,
+   "abs_sum": 0.2298043764007934,
+   "joint": 0.04042040303448309,
+   "ratio": 5.685355888330573
+  },
+  {
+   "budget": "240/24",
+   "source": "2-Exp-48",
+   "variant": "no_center",
+   "seed": 23,
+   "abs_sum": 0.0894214799410372,
+   "joint": 0.04232794312270444,
+   "ratio": 2.1125874149332833
+  },
+  {
+   "budget": "240/24",
+   "source": "2-Exp-48",
+   "variant": "no_center",
+   "seed": 31,
+   "abs_sum": 0.14449586473950024,
+   "joint": 0.0379726008513301,
+   "ratio": 3.805266468452578
+  },
+  {
+   "budget": "240/24",
+   "source": "2-Exp-48",
+   "variant": "no_center",
+   "seed": 47,
+   "abs_sum": 0.14821097420150686,
+   "joint": 0.04299084106368316,
+   "ratio": 3.447501154535663
+  },
+  {
+   "budget": "240/24",
+   "source": "2-Exp-48",
+   "variant": "no_center",
+   "seed": 59,
+   "abs_sum": 0.14912053656347912,
+   "joint": 0.04059452371487529,
+   "ratio": 3.673415104235747
+  },
+  {
+   "budget": "240/24",
+   "source": "2-Exp-53",
+   "variant": "centered",
+   "seed": 17,
+   "abs_sum": 0.07420703686772313,
+   "joint": 0.04356476046762085,
+   "ratio": 1.7033730031151417
+  },
+  {
+   "budget": "240/24",
+   "source": "2-Exp-53",
+   "variant": "centered",
+   "seed": 23,
+   "abs_sum": 0.07196708196750462,
+   "joint": 0.04107809812023222,
+   "ratio": 1.751957497079414
+  },
+  {
+   "budget": "240/24",
+   "source": "2-Exp-53",
+   "variant": "centered",
+   "seed": 31,
+   "abs_sum": 0.0682500870933476,
+   "joint": 0.03963476745374979,
+   "ratio": 1.7219752121162137
+  },
+  {
+   "budget": "240/24",
+   "source": "2-Exp-53",
+   "variant": "centered",
+   "seed": 47,
+   "abs_sum": 0.07488411186690527,
+   "joint": 0.04254167037218606,
+   "ratio": 1.7602532108345432
+  },
+  {
+   "budget": "240/24",
+   "source": "2-Exp-53",
+   "variant": "centered",
+   "seed": 59,
+   "abs_sum": 0.0718077561003262,
+   "joint": 0.04079600885655998,
+   "ratio": 1.7601662052972997
+  },
+  {
+   "budget": "240/24",
+   "source": "2-Exp-53",
+   "variant": "no_center",
+   "seed": 17,
+   "abs_sum": 0.2298043764007934,
+   "joint": 0.04042040303448309,
+   "ratio": 5.685355888330573
+  },
+  {
+   "budget": "240/24",
+   "source": "2-Exp-53",
+   "variant": "no_center",
+   "seed": 23,
+   "abs_sum": 0.0894214799410372,
+   "joint": 0.04232794312270444,
+   "ratio": 2.1125874149332833
+  },
+  {
+   "budget": "240/24",
+   "source": "2-Exp-53",
+   "variant": "no_center",
+   "seed": 31,
+   "abs_sum": 0.14449586473950024,
+   "joint": 0.0379726008513301,
+   "ratio": 3.805266468452578
+  },
+  {
+   "budget": "240/24",
+   "source": "2-Exp-53",
+   "variant": "no_center",
+   "seed": 47,
+   "abs_sum": 0.14821097420150686,
+   "joint": 0.04299084106368316,
+   "ratio": 3.447501154535663
+  },
+  {
+   "budget": "240/24",
+   "source": "2-Exp-53",
+   "variant": "no_center",
+   "seed": 59,
+   "abs_sum": 0.14912053656347912,
+   "joint": 0.04059452371487529,
+   "ratio": 3.673415104235747
+  },
+  {
+   "budget": "480/48",
+   "source": "2-Exp-54",
+   "variant": "centered",
+   "seed": 17,
+   "abs_sum": 0.0777649275673336,
+   "joint": 0.044509515745305574,
+   "ratio": 1.7471528563088328
+  },
+  {
+   "budget": "480/48",
+   "source": "2-Exp-54",
+   "variant": "centered",
+   "seed": 23,
+   "abs_sum": 0.07935237424247057,
+   "joint": 0.04460813231006085,
+   "ratio": 1.7788768579439844
+  },
+  {
+   "budget": "480/48",
+   "source": "2-Exp-54",
+   "variant": "centered",
+   "seed": 31,
+   "abs_sum": 0.07646823913368617,
+   "joint": 0.04299167138961656,
+   "ratio": 1.7786756518648617
+  },
+  {
+   "budget": "480/48",
+   "source": "2-Exp-54",
+   "variant": "centered",
+   "seed": 47,
+   "abs_sum": 0.07424993561254495,
+   "joint": 0.042216918956008896,
+   "ratio": 1.7587720148387729
+  },
+  {
+   "budget": "480/48",
+   "source": "2-Exp-54",
+   "variant": "centered",
+   "seed": 59,
+   "abs_sum": 0.07823138934830581,
+   "joint": 0.043605596920918595,
+   "ratio": 1.7940676168287113
+  },
+  {
+   "budget": "480/48",
+   "source": "2-Exp-54",
+   "variant": "no_center",
+   "seed": 17,
+   "abs_sum": 0.23141019131480284,
+   "joint": 0.04748948214808803,
+   "ratio": 4.872872494022755
+  },
+  {
+   "budget": "480/48",
+   "source": "2-Exp-54",
+   "variant": "no_center",
+   "seed": 23,
+   "abs_sum": 0.09381831253538413,
+   "joint": 0.048216425173665346,
+   "ratio": 1.9457749552661867
+  },
+  {
+   "budget": "480/48",
+   "source": "2-Exp-54",
+   "variant": "no_center",
+   "seed": 31,
+   "abs_sum": 0.15405685142321507,
+   "joint": 0.048582499525736435,
+   "ratio": 3.171035927075014
+  },
+  {
+   "budget": "480/48",
+   "source": "2-Exp-54",
+   "variant": "no_center",
+   "seed": 47,
+   "abs_sum": 0.15371202167963732,
+   "joint": 0.04921420190512993,
+   "ratio": 3.12332651408119
+  },
+  {
+   "budget": "480/48",
+   "source": "2-Exp-54",
+   "variant": "no_center",
+   "seed": 59,
+   "abs_sum": 0.15021043816219207,
+   "joint": 0.04828509377752626,
+   "ratio": 3.1109070400543737
+  }
+ ],
+ "aggregate": [
+  {
+   "budget": "60/8",
+   "source": "2-Exp-44",
+   "variant": "centered",
+   "runs": 5,
+   "abs_sum_mean": 0.06992157554191054,
+   "abs_sum_std": 0.0034259620798886416,
+   "joint_mean": 0.04140931805494721,
+   "joint_std": 0.0020032512629305247,
+   "ratio_mean": 1.6888017698085098,
+   "ratio_std": 0.03676604721411373
+  },
+  {
+   "budget": "60/8",
+   "source": "2-Exp-44",
+   "variant": "no_center",
+   "runs": 5,
+   "abs_sum_mean": 0.15004522380708393,
+   "abs_sum_std": 0.05907776997753256,
+   "joint_mean": 0.02949354998706225,
+   "joint_std": 0.008803709832609316,
+   "ratio_mean": 5.392188412148441,
+   "ratio_std": 2.4457762685525495
+  },
+  {
+   "budget": "60/8",
+   "source": "2-Exp-46",
+   "variant": "centered",
+   "runs": 5,
+   "abs_sum_mean": 0.06992157554191054,
+   "abs_sum_std": 0.0034259620798886416,
+   "joint_mean": 0.04140931805494721,
+   "joint_std": 0.0020032512629305247,
+   "ratio_mean": 1.6888017698085098,
+   "ratio_std": 0.03676604721411373
+  },
+  {
+   "budget": "120/16",
+   "source": "2-Exp-46",
+   "variant": "centered",
+   "runs": 5,
+   "abs_sum_mean": 0.07127868768013902,
+   "abs_sum_std": 0.001985915682887087,
+   "joint_mean": 0.04129923934135527,
+   "joint_std": 0.001510885888705615,
+   "ratio_mean": 1.7264530677883083,
+   "ratio_std": 0.026387064104844104
+  },
+  {
+   "budget": "240/24",
+   "source": "2-Exp-48",
+   "variant": "centered",
+   "runs": 5,
+   "abs_sum_mean": 0.07222321477916137,
+   "abs_sum_std": 0.0025999940831392346,
+   "joint_mean": 0.04152306105406978,
+   "joint_std": 0.001540969749025813,
+   "ratio_mean": 1.7395450256885225,
+   "ratio_std": 0.02561857232821473
+  },
+  {
+   "budget": "240/24",
+   "source": "2-Exp-48",
+   "variant": "no_center",
+   "runs": 5,
+   "abs_sum_mean": 0.15221064636926337,
+   "abs_sum_std": 0.05012068029420019,
+   "joint_mean": 0.04086126235741522,
+   "joint_std": 0.0019555133390134014,
+   "ratio_mean": 3.744825206097569,
+   "ratio_std": 1.277401040792664
+  },
+  {
+   "budget": "240/24",
+   "source": "2-Exp-53",
+   "variant": "centered",
+   "runs": 5,
+   "abs_sum_mean": 0.07222321477916137,
+   "abs_sum_std": 0.0025999940831392346,
+   "joint_mean": 0.04152306105406978,
+   "joint_std": 0.001540969749025813,
+   "ratio_mean": 1.7395450256885225,
+   "ratio_std": 0.02561857232821473
+  },
+  {
+   "budget": "240/24",
+   "source": "2-Exp-53",
+   "variant": "no_center",
+   "runs": 5,
+   "abs_sum_mean": 0.15221064636926337,
+   "abs_sum_std": 0.05012068029420019,
+   "joint_mean": 0.04086126235741522,
+   "joint_std": 0.0019555133390134014,
+   "ratio_mean": 3.744825206097569,
+   "ratio_std": 1.277401040792664
+  },
+  {
+   "budget": "480/48",
+   "source": "2-Exp-54",
+   "variant": "centered",
+   "runs": 5,
+   "abs_sum_mean": 0.07721337318086822,
+   "abs_sum_std": 0.0019527596926880925,
+   "joint_mean": 0.0435863670643821,
+   "joint_std": 0.0010155821678798195,
+   "ratio_mean": 1.7715089995570326,
+   "ratio_std": 0.018506687638267284
+  },
+  {
+   "budget": "480/48",
+   "source": "2-Exp-54",
+   "variant": "no_center",
+   "runs": 5,
+   "abs_sum_mean": 0.15664156302304627,
+   "abs_sum_std": 0.0489737962893917,
+   "joint_mean": 0.0483575405060292,
+   "joint_std": 0.000625132524259321,
+   "ratio_mean": 3.244783386099904,
+   "ratio_std": 1.0459696915085306
+  }
+ ]
+}

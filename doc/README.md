@@ -54,4 +54,4 @@
 | 2-Exp-51 | [2-Exp-51_prospective_screening.md](2-Exp-51_prospective_screening.md) | 適用対象の事前スクリーニング（過去窓→将来窓、未来日マスク条件） |
 | 2-Exp-52 | [2-Exp-52_unified_future_horizon.md](2-Exp-52_unified_future_horizon.md) | 統一アーキテクチャの未来日性能を 7 日マスク・240 epoch で再現確認 |
 | 2-Exp-53 | [2-Exp-53_baseline_diagnosis.md](2-Exp-53_baseline_diagnosis.md) | 基準値診断: どの基準値の後にどの残差構造が残るかを残差振幅の帰無分布比で判定（permutation の p 値は実データで判別せず） |
-| 2-Exp-55 | [2-Exp-55_axis_usability_and_centering.md](2-Exp-55_axis_usability_and_centering.md) | 軸構造の利用可能性（oracle 上限と汎化）と、中心化が成分の大きさを情報にすること（事後解析・事前登録なし） |
+| 2-Exp-55 | [2-Exp-55_axis_usability_and_centering.md](2-Exp-55_axis_usability_and_centering.md) | 軸構造の利用可能性（oracle 上限と汎化）と、中心化が成分の大きさを情報にすること。打ち消し比は 60〜480 epoch で不変（精度優位は 480 で符号反転）。事後解析・事前登録なし |
