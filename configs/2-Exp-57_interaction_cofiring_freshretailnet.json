@@ -1,0 +1,64 @@
+{
+  "source_runs": "runs/2-Exp-44_component_interpretation_freshretailnet/dim10",
+  "variant": "output_decomp_centered",
+  "seeds": [17, 23, 31, 47, 59],
+  "output_dir": "runs/2-Exp-57_interaction_cofiring_freshretailnet",
+  "figure_dir": "figures/2-Exp-57",
+  "sets": [
+    {
+      "name": "E_exploratory",
+      "kind": "saved",
+      "role": "exploratory",
+      "description": "2-Exp-44 test arrays (series 0-1499, 24 stores, 2024-05-29..06-25). Already inspected before pre-registration."
+    },
+    {
+      "name": "C1_heldout_same_dates",
+      "kind": "extract",
+      "role": "confirmatory",
+      "mode": "eval_tail",
+      "series_start_offset": 7500,
+      "max_series": 10000,
+      "description": "Series never used for train/valid (offset 7500), same 28 days as the test set (2024-05-29..06-25)."
+    },
+    {
+      "name": "C2_heldout_unseen_dates",
+      "kind": "extract",
+      "role": "confirmatory",
+      "mode": "train_window",
+      "window_start": "2024-04-27",
+      "series_start_offset": 7500,
+      "max_series": 10000,
+      "description": "Same held-out series on 2024-04-27..05-24, disjoint from the training dates (03-28..04-26)."
+    }
+  ],
+  "statistic": {
+    "min_observed_hours": 6,
+    "min_valid_days": 14,
+    "min_group_series": 3,
+    "remove_effects": ["city_date", "product_dow"],
+    "n_permutations": 200,
+    "permutation_seed": 0
+  },
+  "explanation": {
+    "covariates": ["activity_flag", "discount", "abs_discount_dev", "activity_switch", "stockout_fraction"]
+  },
+  "events": {
+    "min_series": 5,
+    "min_mean_z": 1.0,
+    "min_frac_z_above_1": 0.5,
+    "marked_activity_jump": 0.5,
+    "marked_discount_drop": 0.10
+  },
+  "preregistered": {
+    "P1_product_ratio_min": 1.2,
+    "P1_p_max": 0.01,
+    "P3_explained_fraction_threshold": 0.5,
+    "P4_enrichment_min": 2.0,
+    "P4_unmarked_majority": 0.5
+  },
+  "case_study": {
+    "set": "C1_heldout_same_dates",
+    "seed": 17,
+    "n_events": 6
+  }
+}
