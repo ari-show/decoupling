@@ -2,6 +2,7 @@
 
 作成日: 2026-11-09
 関連: [2-Exp-53_baseline_diagnosis.md](2-Exp-53_baseline_diagnosis.md)、
+[2-Exp-54_centering_effect_long_budget.md](2-Exp-54_centering_effect_long_budget.md)、
 [2-Exp-44_component_interpretation.md](2-Exp-44_component_interpretation.md)、
 [2-Exp-48_main_table_long_budget.md](2-Exp-48_main_table_long_budget.md)、
 [conference/apiems2026/paper-story.md](conference/apiems2026/paper-story.md)
@@ -213,9 +214,9 @@ held-out で +30.44% / +19.80% の使える構造があることは、構造が�
 中心化を精度で正当化すると予算に条件づく（しかも 480 では成立しない）が、
 成分の大きさを情報にする働きはこの範囲で不変である。
 
-480 / 48 の行は 2-Exp-54（中心化の効果量と頭打ち位置、`epochs` 480 / `patience` 48）の
-成分アレイから計算した。本 doc 執筆時点で同実験は別ブランチで進行中であり main に入っていない。
-数値はこちらで独立に再計算して一致を確認している。
+480 / 48 の行は [2-Exp-54_centering_effect_long_budget.md](2-Exp-54_centering_effect_long_budget.md)
+（中心化の効果量と頭打ち位置、`epochs` 480 / `patience` 48）の成分アレイから計算した。
+数値は同実験の報告値をこちらで独立に再計算して一致を確認している。
 
 **ただし 480 の centered は収束値ではない。** 5 seed のうち 4 seed が上限 480 に到達し、
 最終 50 epoch の valid loss の傾きが 5 seed すべて負である（下降中に打ち切られている）。
