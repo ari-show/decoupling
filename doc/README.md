@@ -46,3 +46,4 @@
 | 2-Exp-43 | [2-Exp-43_future_covariate_masking.md](2-Exp-43_future_covariate_masking.md) | 未来日評価で天候（実測値）を隠し、2-Exp-39/42 の未来日主張を先読みなしで再検証 |
 | 2-Exp-44 | [2-Exp-44_component_interpretation.md](2-Exp-44_component_interpretation.md) | 主結果条件での成分解釈（分散寄与・bias 帰属・共変量応答・低ランク性） |
 | 2-Exp-45 | [2-Exp-45_day_hour_encoder_architecture.md](2-Exp-45_day_hour_encoder_architecture.md) | 日/時間帯 Encoder の GRU vs MLP 比較（パラメータ整合の対照つき・5 seed） |
+| 2-Exp-46 | [2-Exp-46_epoch_budget_component_stability.md](2-Exp-46_epoch_budget_component_stability.md) | 成分解釈の学習量依存性（epochs 120 / patience 16 と 60 の対照） |
