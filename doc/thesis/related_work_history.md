@@ -92,7 +92,9 @@ Transformer 系予測が、分解をアーキテクチャの中に入れた時�
 - したがって本研究は、「解釈可能加法モデルの純化」を**時系列の残差補正**へ持ち込んだ研究として位置づけられる。この接続は現 proposal にまだ書かれていないので、修論で足す価値が最も高い。
 - Hooker (2007) は入力が従属なときの直交性（階層的直交性）を扱っており、日と時間帯が独立でない実データでの centering の正当化に使える。
 
-関連: Hastie & Tibshirani (1986), Stone (1985), Sobol' (2001), Hooker (2007), Lou et al. (2013), Lengerich et al. (2020), Agarwal et al. (2021), Rudin (2019)
+- **2026-11-09 追記。** この系譜はさらに「制約をニューラルネットの出力に入れる」段階まで進んでいた。Märtens & Yau (2020) は VAE の decoder 出力を主効果 + 交互作用に加法分解し、各成分に周辺効果ゼロの積分制約をペナルティとして課している。GAMI-Net (Yang et al. 2021) は各成分の平均ゼロと marginal clarity を、ANOVA-TPNN (Park et al. 2025) は sum-to-zero を構造で保証する。**したがって「出力側に制約を置く」設計自体は本研究の新規性ではない。** 詳細と主張の修正案は [anova_output_constraint_prior_work.md](anova_output_constraint_prior_work.md) に分けてある。
+
+関連: Hastie & Tibshirani (1986), Stone (1985), Sobol' (2001), Hooker (2007), Lou et al. (2013), Lengerich et al. (2020), Märtens & Yau (2020), Yang et al. (2021), Agarwal et al. (2021), Park et al. (2025), Rudin (2019)
 
 ### 第 8 期（2020–2025）: 大規模小売ベンチマークと打ち切り需要データ
 
@@ -102,7 +104,9 @@ M5 で「階層つき小売需要の大規模比較」が標準化され、Fresh
 - FreshRetailNet-50K (2025) は、本研究の実験基盤そのものであり、欠品による構造的欠測が MAR 仮定を破ることを明示している。
 - 時間帯粒度の小売需要に加法モデルを当てた先行例として Boldi et al. (2019) があり、**本研究に最も近い応用研究**の一つとして必ず引くべきである（分位点加法モデルで時間内売上を予測）。
 
-関連: Makridakis et al. (2020, 2022a, 2022b), Fildes et al. (2022), Hyndman et al. (2011), Wickramasuriya et al. (2019), Boldi et al. (2019), Wang et al. (2025, FreshRetailNet-50K)
+- 日次だが、解釈可能な加法分解を実小売データで評価した HNAM (Feddersen & Cleophas 2024) が応用面の最近傍である。level + 共変量別係数を階層指定で分解するが、成分への平均ゼロ制約を持たず、成分の正しさも定量評価していない。
+
+関連: Makridakis et al. (2020, 2022a, 2022b), Fildes et al. (2022), Hyndman et al. (2011), Wickramasuriya et al. (2019), Boldi et al. (2019), Feddersen & Cleophas (2024), Wang et al. (2025, FreshRetailNet-50K)
 
 ## 2. 系譜ごとの「何を分け、どこで保証するか」
 
@@ -116,13 +120,15 @@ M5 で「階層つき小売需要の大規模比較」が標準化され、Fresh
 | global-local 予測 | 共通 / 系列固有 | モデル分割 | 2 分割 | 日・時間帯まで割らない |
 | Transformer 内分解 | trend / season / scale | アーキテクチャ | 粗い | 運用単位に対応しない |
 | 加法モデルの純化 | 主効果 / 交互作用 | functional ANOVA | 特徴単位 | 時系列の残差補正には適用されていない |
+| 出力制約つき加法 NN | 主効果 / 交互作用 | **出力成分への平均ゼロ・積分ゼロ制約** | 潜在 × 共変量、特徴単位 | 軸が時系列の構造単位ではなく、残差を対象にしない |
+| biased 行列分解 | 全体 / 行 / 列 / 交互作用 | 正則化（制約なし） | 二元配置 | 制約で担当範囲を固定しない。時間構造を持たない |
 | **本研究** | **系列 / 日 / 時間帯 / 日×時間帯** | **出力成分の平均ゼロ・主効果除去制約** | **運用単位** | — |
 
 この表の最終行が、修論の貢献の主張形になる。
 
-## 3. related work 章の段落設計（修論版・8 段落）
+## 3. related work 章の段落設計（修論版・9 段落）
 
-既存 proposal の 6 段落を、ANOVA 系譜と小売系譜を足して 8 段落に拡張する。
+既存 proposal の 6 段落を、ANOVA 系譜と小売系譜を足して 9 段落に拡張する。
 
 | # | 段落の主張 | 主な引用 |
 |---|---|---|
@@ -132,7 +138,8 @@ M5 で「階層つき小売需要の大規模比較」が標準化され、Fresh
 | 4 | 自己教師あり時系列表現は下流性能では有効だが、成分の運用的意味は与えない | CPC, TNC, TS2Vec, TS-TCC, TF-C, CoST, Zerveas, PatchTST |
 | 5 | 予測側では global-local 分割と内部分解が有効だが、粒度は trend/season/scale に留まる | DeepAR, Deep Factors, DeepGLO, TLAE, N-BEATS, Autoformer, FEDformer, TimeMixer, DLinear, Montero-Manso & Hyndman |
 | 6 | 一方、解釈可能加法モデルの系譜は「主効果を抜いて交互作用を純化する」ことを制約として明示してきた | GAM, GA²M, Hooker 2007, Lengerich 2020, NAM, Rudin |
-| 7 | 小売需要では基準値が強く、欠品による打ち切りがあり、評価は階層・外れケース依存である | M5, Fildes 2022, Croston, Anupindi, Vulcano, Boldi 2019, FreshRetailNet-50K |
+| 6' | その制約をニューラルネットの出力成分に課す設計も既に提案されているが、軸は潜在変数・共変量・特徴量であり、時系列の構造単位ではない | Märtens & Yau 2020, Yang et al. 2021 (GAMI-Net), Park et al. 2025 (ANOVA-TPNN), Ramchandran et al. 2021, Koren et al. 2009 |
+| 7 | 小売需要では基準値が強く、欠品による打ち切りがあり、評価は階層・外れケース依存である。加法分解を小売に持ち込んだ例も日次・生の売上対象で、成分の正しさを評価していない | M5, Fildes 2022, Croston, Anupindi, Vulcano, Boldi 2019, Feddersen & Cleophas 2024, FreshRetailNet-50K |
 | 8 | 以上より、本研究は「強い基準値後の残差」を対象に、出力補正を系列/日/時間帯/日×時間帯へ分け、平均ゼロ制約で担当範囲を固定する点で既存研究と異なる | — |
 
 締めの英文（proposal の既存案を ANOVA 系譜ぶん拡張したもの）:
@@ -141,23 +148,25 @@ M5 で「階層つき小売需要の大規模比較」が標準化され、Fresh
 Prior work has demonstrated the value of local/global separation in latent space,
 contrastive time-series representations, and decomposition-based forecasting, while
 the interpretable-additive-model literature has shown that interaction effects must be
-purified against main effects to be readable. However, latent disentanglement is not
-identifiable without additional assumptions, and existing time-series decompositions
-remain at coarse levels such as trend, seasonality, or scale. In contrast, this work
-targets the residual left by strong retail baselines and constrains the output correction
-itself into operational components -- series, day, hour, and day-hour interaction --
-with zero-mean and main-effect-removal constraints.
+purified against main effects to be readable, and that such constraints can be imposed
+on the outputs of neural networks. However, those output constraints have been placed
+on axes given by latent variables, covariates, or input features, and existing
+time-series decompositions remain at coarse levels such as trend, seasonality, or scale.
+In contrast, this work places zero-mean and main-effect-removal constraints on axes given
+by the structure of the series itself -- series, day, hour, and day-hour interaction --
+and applies them to the residual left by a strong retail baseline rather than to the
+raw target.
 ```
 
 ## 4. 引用の優先順位
 
 | 層 | 本数 | 用途 |
 |---|---|---|
-| 必須（本文で必ず引く） | 34 | 元論文、disentanglement の識別性、global-local 予測、分解型予測、加法モデルの純化、小売・FreshRetailNet、評価指標 |
-| 補強（related work と考察で引く） | 42 | 自己教師あり表現、異常検知・高残差、局所パターン、階層予測、較正 |
+| 必須（本文で必ず引く） | 39 | 元論文、disentanglement の識別性、global-local 予測、分解型予測、加法モデルの純化、小売・FreshRetailNet、評価指標 |
+| 補強（related work と考察で引く） | 43 | 自己教師あり表現、異常検知・高残差、局所パターン、階層予測、較正 |
 | 背景・歴史（序論 1 段落で束ねて引く） | 21 | 指数平滑、季節調整、ANOVA 古典、状態空間 |
 
-合計 97 件。30 本という最低ラインには十分な余裕がある。詳細は [references.md](references.md) の「層」列を見る。
+合計 103 件。30 本という最低ラインには十分な余裕がある。詳細は [references.md](references.md) の「層」列を見る。
 
 ## 5. 残っている調査課題
 
@@ -165,4 +174,4 @@ with zero-mean and main-effect-removal constraints.
 
 1. **時間帯粒度の小売需要予測の先行研究が薄い。** Boldi et al. (2019) 以外に直接の比較対象が見つかっていない。`intraday retail demand forecasting` / `hourly store sales profile` / `within-day demand profile` での追加探索が必要である。
 2. **欠品打ち切りと表現学習を同時に扱った研究**を特定できていない。FreshRetailNet の baseline 論文（Wang et al. 2025）の引用文献を辿るのが最短である。
-3. **二元配置 ANOVA をニューラルネットの出力制約として入れた先行例**が、Lengerich et al. (2020) 以外にあるか未確認である。もしあれば本研究の新規性の記述を弱める必要があるので、投稿前に必ず確認する。
+3. ~~二元配置 ANOVA をニューラルネットの出力制約として入れた先行例が、Lengerich et al. (2020) 以外にあるか未確認である。~~ **2026-11-09 に調査し、決着した。先行例は存在する**（Märtens & Yau 2020, GAMI-Net 2021, ANOVA-TPNN 2025、応用側は HNAM 2024）。新規性の記述は書き換えが必要で、修正案を [anova_output_constraint_prior_work.md](anova_output_constraint_prior_work.md) に置いた。残る未確認点は同ドキュメントの最終節にまとめた（GAMI-Net の平均ゼロが仮定かハード制約か、HNAM の査読誌版の有無）。

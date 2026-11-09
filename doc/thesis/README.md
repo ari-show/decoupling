@@ -3,13 +3,20 @@
 | ファイル | 内容 |
 |---|---|
 | [related_work_history.md](related_work_history.md) | 従来研究の系譜（8 期の時代区分）、系譜ごとの「何を分け、どこで保証するか」、related work 章の 8 段落設計、残っている調査課題 |
-| [references.md](references.md) | 参考文献 97 件の分野別リスト（層・本研究との関係・書誌確認状況つき） |
-| [references.bib](references.bib) | 上記 97 件の BibTeX。キーは references.md と一致 |
+| [references.md](references.md) | 参考文献 103 件の分野別リスト（層・本研究との関係・書誌確認状況つき） |
+| [references.bib](references.bib) | 上記 103 件の BibTeX。キーは references.md と一致 |
+| [anova_output_constraint_prior_work.md](anova_output_constraint_prior_work.md) | **本研究の方法そのものの先行例の精査**。出力成分への平均ゼロ制約は既存であることの確認、残る新規性の切り分け、本文の記述の修正案 |
 
 ## 現状
 
-- 2026-11-09 時点で 97 件を収集。本文で必ず引く `必須` 層が 34 件あり、「最低 30 本」の要件は満たしている。
-- うち 22 件は Web 検索で著者・会議・年（可能なら巻号頁）を照合済み。残り 75 件は分野の定番文献で、`references.bib` に `% TODO` を付けてある。投稿前に DOI で巻号・頁を照合する。
+- 2026-11-09 時点で 103 件を収集。本文で必ず引く `必須` 層が 39 件あり、「最低 30 本」の要件は満たしている。
+- うち 27 件は Web 検索で著者・会議・年（可能なら巻号頁）を照合済み。残り 76 件は分野の定番文献で、`references.bib` に `% TODO` を付けてある。投稿前に DOI で巻号・頁を照合する。
+
+## 最重要: 新規性の記述を書き換える必要がある
+
+追加調査（[anova_output_constraint_prior_work.md](anova_output_constraint_prior_work.md)）の結果、**「出力成分に平均ゼロ・主効果除去制約を入れる」という設計には先行例がある**ことが確定した。最近傍は Märtens & Yau (2020) で、VAE の decoder 出力を主効果 + 交互作用に加法分解し、各成分へ周辺効果ゼロの積分制約をペナルティとして課している。
+
+したがって proposal の新規性 3 番はそのままでは主張できない。残る差分は「制約の仕組み」ではなく **軸の選び方（時系列の構造単位）** と **対象（強い基準値後の残差）** と **成分回復の定量評価** であり、主張の順序も 1 → 2 → 4 → 3 に変える。具体的な書き換え案は同ドキュメントにある。
 
 ## この調査で分かった、proposal に足すべき 2 点
 
@@ -18,4 +25,7 @@
 
 ## 次の調査課題
 
-[related_work_history.md](related_work_history.md) の第 5 節に 3 件（時間帯粒度の小売需要予測、欠品打ち切り × 表現学習、ANOVA 制約を NN 出力に入れた先行例）を記録してある。3 件目は新規性の記述に直接関わるため、投稿前に必ず確認する。
+[related_work_history.md](related_work_history.md) の第 5 節に記録してある。3 件目（ANOVA 制約を NN 出力に入れた先行例）は 2026-11-09 に調査し決着した。残るのは次の 2 件である。
+
+1. 時間帯粒度の小売需要予測の先行研究が薄い。Boldi et al. (2019) と HNAM (2024, ただし日次) 以外の直接の比較対象が見つかっていない。
+2. 欠品打ち切りと表現学習を同時に扱った研究を特定できていない。FreshRetailNet の baseline 論文 (Wang et al. 2025) の引用文献を辿るのが最短である。

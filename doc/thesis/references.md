@@ -1,14 +1,15 @@
-# 修論用 参考文献リスト（分野別・97 件）
+# 修論用 参考文献リスト（分野別・103 件）
 
 作成日: 2026-11-09
 
 ## 使い方
 
 - 系譜としての読み方は [related_work_history.md](related_work_history.md) を見る。
+- 本研究の方法そのものの先行例（#99〜#103 を中心に）の精査は [anova_output_constraint_prior_work.md](anova_output_constraint_prior_work.md) にある。
 - BibTeX は [references.bib](references.bib) にある。キーは本リストの `key` 列と一致する。
 - **層**: `必須` = 本文で必ず引く / `補強` = related work・考察で引く / `背景` = 序論で束ねて引く。
 - **確認**: `✓` = 2026-11-09 に Web 検索で著者・会議・年（可能なら巻号頁）まで確認済み / `△` = 定番文献だが今回は未照合。**投稿前に DOI で要確認**。
-- 最低 30 本の要求に対し、`必須` だけで 34 件ある（必須 34 / 補強 42 / 背景 21）。
+- 最低 30 本の要求に対し、`必須` だけで 39 件ある（必須 39 / 補強 43 / 背景 21）。
 
 ## A. 元論文と、潜在表現の分離（static/dynamic, local/global）
 
@@ -30,6 +31,7 @@
 | 14 | chung2015vrnn | Chung, J. et al. "A Recurrent Latent Variable Model for Sequential Data." NeurIPS 2015. | 背景 | 系列潜在変数モデルの基礎 | △ |
 | 15 | krishnan2017ssm | Krishnan, R. G., Shalit, U., Sontag, D. "Structured Inference Networks for Nonlinear State Space Models." AAAI 2017. | 背景 | 深層状態空間モデル。構造を入れた推論 | △ |
 | 16 | rasmussen2006gp | Rasmussen, C. E., Williams, C. K. I. *Gaussian Processes for Machine Learning*. MIT Press, 2006. | 補強 | GP prior の定式化の典拠 | △ |
+| 98 | ramchandran2021lvae | Ramchandran, S., Tikhonov, G., Kujanpää, K., Koskinen, M., Lähdesmäki, H. "Longitudinal Variational Autoencoder." AISTATS 2021, PMLR 130:3898–3906. | 補強 | VAE の**潜在側**に加法 GP prior を置き共変量とその交互作用を分離。本研究が出力側に移した対比として引く | ✓ |
 
 ## B. 自己教師あり／対照学習による時系列表現
 
@@ -96,6 +98,10 @@
 | 60 | lengerich2020purifying | Lengerich, B., Tan, S., Chang, C.-H., Hooker, G., Caruana, R. "Purifying Interaction Effects with the Functional ANOVA: An Efficient Algorithm for Recovering Identifiable Additive Models." AISTATS 2020, PMLR 108:2402–2412. | 必須 | **交互作用から主効果を抜いて純化する**。本研究の centering と同じ発想の最近傍文献 | ✓ |
 | 61 | agarwal2021nam | Agarwal, R., Melnick, L., Frosst, N., Zhang, X., Lengerich, B., Caruana, R., Hinton, G. E. "Neural Additive Models: Interpretable Machine Learning with Neural Nets." NeurIPS 2021 (NeurIPS 34). | 必須 | NN で加法構造を保つ。本研究の 4 成分ヘッドの先例 | ✓ |
 | 62 | gelman2007multilevel | Gelman, A., Hill, J. *Data Analysis Using Regression and Multilevel/Hierarchical Models*. Cambridge University Press, 2007. | 補強 | 系列固有効果を変量効果として読む見方 | △ |
+| 99 | martens2020neuraldecomposition | Märtens, K., Yau, C. "Neural Decomposition: Functional ANOVA with Variational Autoencoders." AISTATS 2020, PMLR 108:2917–2927. | 必須 | **最近傍の先行研究**。VAE decoder 出力を主効果 + 交互作用に加法分解し、各成分へ周辺効果ゼロの積分制約をペナルティで課す。本研究の centering とほぼ同型 | ✓ |
+| 100 | yang2021gaminet | Yang, Z., Zhang, A., Sudjianto, A. "GAMI-Net: An Explainable Neural Network Based on Generalized Additive Models with Structured Interactions." Pattern Recognition, 2021. | 必須 | 各成分の平均ゼロ + marginal clarity（主効果と子交互作用の直交性）。制約の設計の直接の参照 | ✓ |
+| 101 | park2025anovatpnn | Park, S., Kong, I., Choi, Y., Park, C., Kim, Y. "Tensor Product Neural Networks for Functional ANOVA Model." ICML 2025, PMLR 267. | 必須 | sum-to-zero を**構造で**保証する別解。本研究はペナルティで入れるため、今後課題の比較対象 | ✓ |
+| 102 | koren2009mf | Koren, Y., Bell, R., Volinsky, C. "Matrix Factorization Techniques for Recommender Systems." IEEE Computer 42(8):30–37, 2009. | 必須 | biased MF の `全体平均 + 行効果 + 列効果 + 交互作用` は二元配置 ANOVA と同型。識別性を制約でなく正則化で扱う点が差分。査読で指摘される前に自分から触れる | △ |
 
 ## F. 解釈性一般
 
@@ -131,6 +137,7 @@
 | 80 | anupindi1998substitution | Anupindi, R., Dada, M., Gupta, S. "Estimation of Consumer Demand with Stock-Out Based Substitution: An Application to Vending Machine Products." Marketing Science 17(4):406–423, 1998. | 必須 | 欠品下では観測売上から推定した需要が bias を持つ。マスク処理の正当化 | ✓ |
 | 81 | vulcano2012primarydemand | Vulcano, G., van Ryzin, G., Ratliff, R. "Estimating Primary Demand for Substitutable Products from Sales Transaction Data." Operations Research 60(2):313–334, 2012. | 必須 | 打ち切り需要の EM 推定。欠品を無視すると需要が下方 bias する | ✓ |
 | 82 | boldi2019intraday | Boldi, M.-O., Chavez-Demoulin, V., Gallay, O. "Intraday Retail Sales Forecast: An Efficient Algorithm for Quantile Additive Modeling." arXiv:1912.07373, 2019. | 必須 | **時間帯粒度の小売売上に加法モデルを当てた最近傍の応用研究**。比較・差分の記述に必須 | ✓ |
+| 103 | feddersen2024hnam | Feddersen, L., Cleophas, C. "Hierarchical Neural Additive Models for Interpretable Demand Forecasts." arXiv:2404.04070, 2024. | 必須 | **応用面の最近傍**。level + 共変量別係数ネットワークを階層指定で加法分解し実小売データで評価。ただし日次・生の売上対象・平均ゼロ制約なし・成分回復の評価なし | ✓ |
 | 83 | makridakis2022m5acc | Makridakis, S., Spiliotis, E., Assimakopoulos, V. "M5 Accuracy Competition: Results, Findings, and Conclusions." International Journal of Forecasting 38(4):1346–1364, 2022. | 必須 | 階層つき小売需要の大規模比較。単純手法の強さ | ✓ |
 | 84 | makridakis2022m5bg | Makridakis, S., Spiliotis, E., Assimakopoulos, V. "The M5 Competition: Background, Organization, and Implementation." International Journal of Forecasting 38(4):1325–1336, 2022. | 補強 | M5 の設計。評価設計の参照 | ✓ |
 | 85 | makridakis2020m4 | Makridakis, S., Spiliotis, E., Assimakopoulos, V. "The M4 Competition: 100,000 Time Series and 61 Forecasting Methods." International Journal of Forecasting 36(1):54–74, 2020. | 補強 | ハイブリッド（統計 + ML）の優位。$b+\hat r$ の正当化 | △ |
@@ -156,8 +163,8 @@
 
 | 状態 | 件数 | 対応 |
 |---|---|---|
-| ✓ 書誌確認済み | 22 | そのまま引用可 |
-| △ 未照合 | 75 | 定番文献。投稿前に DOI / 公式ページで巻号・頁を照合する |
+| ✓ 書誌確認済み | 27 | そのまま引用可 |
+| △ 未照合 | 76 | 定番文献。投稿前に DOI / 公式ページで巻号・頁を照合する |
 
 未照合のものは、いずれも分野の標準文献で著者・会議・年の取り違えは起きにくいが、**巻号と頁は必ず一次情報で確認する**。特に書籍（Fisher, Scheffé, Searle, Harvey, Box & Jenkins, Rasmussen & Williams）は版によって頁が変わる。
 
