@@ -1119,6 +1119,35 @@ def run_latent_probes(train_arrays: dict[str, np.ndarray], test_arrays: dict[str
     return metrics
 
 
+COMPONENT_KEYS = ("global_component", "day_component", "hour_component", "interaction_component")
+
+
+def cancellation_ratio(arrays: dict[str, np.ndarray]) -> dict[str, float]:
+    """Component cancellation on observed cells: sum of |component| vs |sum of components|.
+
+    Same definition as ``scripts/analyze_2_exp_55_axis_usability.py`` so that a
+    per-epoch curve and the final value are directly comparable: each component's
+    mean absolute value over observed cells is summed, and the joint term is the
+    mean absolute value of the component sum.
+    """
+    observed = arrays["observed"].astype(bool)
+    total: np.ndarray | None = None
+    abs_sum = 0.0
+    out: dict[str, float] = {}
+    for key in COMPONENT_KEYS:
+        arr = arrays[key].astype(np.float64)
+        total = arr if total is None else total + arr
+        value = float(np.abs(arr[observed]).mean())
+        out[f"abs_{key}"] = value
+        abs_sum += value
+    if total is None:
+        raise ValueError("no component arrays to measure")
+    out["abs_sum"] = abs_sum
+    out["joint"] = float(np.abs(total[observed]).mean())
+    out["ratio"] = abs_sum / max(out["joint"], 1e-12)
+    return out
+
+
 def save_latent_outputs(arrays: dict[str, np.ndarray], out_dir: Path, output_cfg: dict[str, Any]) -> None:
     if bool(output_cfg.get("save_latent_arrays", True)):
         for key in (
@@ -1381,6 +1410,9 @@ def run_variant(config: dict[str, Any], variant: dict[str, Any], bundle, device:
     min_delta = float(train_cfg.get("early_stopping_min_delta", 0.0))
     epochs_without_improvement = 0
     stopped_epoch = 0
+    # Optional cancellation-ratio curve (2-Exp-56). Inference only: run_epoch sets
+    # model.train() again on the next epoch, so this does not affect training.
+    cancel_every = int(output_cfg.get("cancellation_history_every", 0) or 0)
     train_start = time.perf_counter()
     for epoch in range(1, int(train_cfg["epochs"]) + 1):
         train_losses = run_epoch(model, train_loader, variant_config, device, optimizer, f"{name} train {epoch}", scaler=scaler)
@@ -1389,6 +1421,25 @@ def run_variant(config: dict[str, Any], variant: dict[str, Any], bundle, device:
         append_jsonl(out_dir / "history.jsonl", row)
         score = row[str(train_cfg.get("selection_metric", "valid_loss_residual_reconstruction"))]
         logger.info("Epoch %d complete: %s", epoch, row)
+        if cancel_every > 0 and (epoch == 1 or epoch % cancel_every == 0):
+            # Constructing a DataLoader iterator draws one int64 from the global
+            # RNG (``_BaseDataLoaderIter._base_seed``) even with num_workers=0, so
+            # an extra inference pass would shift every later dropout mask and the
+            # run would no longer reproduce the same-seed run without this hook.
+            # Snapshot and restore the RNG so the curve is free of side effects.
+            cpu_rng_state = torch.get_rng_state()
+            cuda_rng_states = torch.cuda.get_rng_state_all() if torch.cuda.is_available() else None
+            try:
+                snapshot = predict_residuals(model, test_loader, variant_config, device)
+                if all(key in snapshot for key in COMPONENT_KEYS):
+                    append_jsonl(
+                        out_dir / "cancellation_history.jsonl",
+                        {"epoch": epoch, **cancellation_ratio(snapshot)},
+                    )
+            finally:
+                torch.set_rng_state(cpu_rng_state)
+                if cuda_rng_states is not None:
+                    torch.cuda.set_rng_state_all(cuda_rng_states)
         stopped_epoch = epoch
         if score < best - min_delta:
             best = float(score)
