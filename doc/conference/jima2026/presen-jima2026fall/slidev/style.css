@@ -1,0 +1,121 @@
+/* 全体スタイル：1〜2文 + 図 のスライド向け */
+.slidev-layout {
+  font-family: 'Noto Sans JP', 'Hiragino Sans', sans-serif;
+  color: #0b0b0b;
+  padding: 1.6rem 2.4rem 1.2rem;
+}
+.slidev-layout h1 {
+  font-size: 1.45rem;
+  font-weight: 700;
+  margin-bottom: 0.7rem;
+  padding-left: 0.6rem;
+  border-left: 6px solid #6250d6;
+  line-height: 1.3;
+}
+.slidev-layout h1 .sec {
+  font-size: 0.85rem;
+  color: #6250d6;
+  font-weight: 700;
+  margin-right: 0.6rem;
+}
+.lead {
+  font-size: 1.15rem;
+  line-height: 1.6;
+  text-align: center;
+  margin: 0.2rem auto 0.6rem;
+}
+.lead b, .lead strong { color: #b4231f; }
+.msg {
+  margin: 0.6rem auto 0;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  background: #f4f1ff;
+  border: 1.5px solid #6250d6;
+  text-align: center;
+  font-size: 1.05rem;
+  font-weight: 700;
+  width: fit-content;
+  max-width: 92%;
+}
+.msg.red { background: #fff3f2; border-color: #b4231f; }
+.cap { font-size: 0.8rem; color: #52514e; text-align: center; }
+.card {
+  border: 1.5px solid #d9d9d4;
+  border-radius: 10px;
+  padding: 0.6rem 0.8rem;
+  background: #fff;
+}
+.card h3 { font-size: 1rem; font-weight: 700; margin: 0 0 0.3rem; }
+.tag { display: inline-block; padding: 0 0.5rem; border-radius: 999px; font-size: 0.8rem; font-weight: 700; color: #fff; }
+.center { display: flex; justify-content: center; align-items: center; }
+.slidev-layout .katex { font-size: 1.05em; }
+.foot { position: absolute; bottom: 0.5rem; right: 1.2rem; font-size: 0.7rem; color: #9a9a9a; }
+
+/* ダークモードでも常に白背景・黒文字 */
+html, body, #app, .slidev-layout { background: #ffffff !important; color: #0b0b0b; }
+
+/* 背景スライドの「次の問い」（スライド末尾で次のスライドへ橋渡し） */
+.hook { margin: 0.45rem auto 0; text-align: center; font-size: 1rem; color: #52514e; }
+.hook::before { content: '▶ '; color: #6250d6; font-weight: 700; }
+.hook b { color: #0b0b0b; }
+
+/* --- リハ2回目の指摘対応で追加 --- */
+/* カード内の段落（数式を含む）を詰める */
+.card p { margin: 0.15rem 0; }
+.card ul { margin: 0.2rem 0 0 1.1rem; padding: 0; }
+.card li { margin: 0.15rem 0; }
+.formulas .card { text-align: center; }
+.formulas .card h3 { text-align: left; }
+.formulas .card .katex { font-size: 1.0em; }
+
+/* 背景1：経営判断のチップ */
+.pill { display: inline-block; padding: 0.1rem 0.7rem; border-radius: 999px; border: 1.5px solid #6250d6; color: #6250d6; font-weight: 700; }
+
+/* 重要スライドの目印（濃淡） */
+.key { position: absolute; top: 0.6rem; right: 1.2rem; background: #b4231f; color: #fff; font-size: 0.7rem; font-weight: 700; padding: 0.1rem 0.6rem; border-radius: 999px; }
+
+/* 研究目的：狙い → 3 ステップ */
+.goal { display: flex; align-items: center; gap: 0.8rem; border: 2px solid #6250d6; background: #f4f1ff; border-radius: 10px; padding: 0.5rem 0.9rem; font-size: 1.0rem; text-align: left; }
+.goal-k { font-weight: 700; color: #fff; background: #6250d6; border-radius: 999px; padding: 0.1rem 0.7rem; font-size: 0.85rem; white-space: nowrap; }
+.step { display: flex; align-items: center; gap: 0.6rem; border: 1.5px solid #d9d9d4; border-radius: 10px; padding: 0.45rem 0.8rem; background: #fff; text-align: left; width: 275px; line-height: 1.35; }
+.step-n { width: 1.7rem; height: 1.7rem; border-radius: 999px; background: #0b0b0b; color: #fff; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.arrow { font-size: 1.6rem; color: #52514e; display: flex; align-items: center; }
+
+/* 青写真・潜在表現スライドの箱と矢印 */
+.bp { border: 1.5px solid #d9d9d4; border-radius: 10px; padding: 0.5rem 0.7rem; display: flex; flex-direction: column; align-items: center; gap: 4px; background: #fff; }
+.bp-t { font-weight: 700; font-size: 0.9rem; white-space: nowrap; }
+.bp-arrow { display: flex; flex-direction: column; align-items: center; color: #52514e; font-size: 1.6rem; line-height: 1; }
+.bp-arrow span { font-size: 0.7rem; font-weight: 700; color: #6250d6; white-space: nowrap; }
+.zpill { display: inline-block; border: 1.5px solid; border-radius: 999px; padding: 0 0.45rem; font-weight: 700; font-family: KaTeX_Math, 'Times New Roman', serif; font-style: italic; line-height: 1.3; }
+
+/* Appendix の表 */
+.appendix table { border-collapse: collapse; width: 100%; }
+.appendix th, .appendix td { border: 1px solid #d9d9d4; padding: 0.2rem 0.5rem; text-align: left; vertical-align: top; line-height: 1.4; }
+.appendix th { background: #f4f1ff; }
+.appendix td:first-child { font-weight: 700; white-space: nowrap; }
+.goal-big { font-size: 1.15rem; line-height: 1.5; padding: 0.7rem 1rem; }
+.appendix th, .appendix td { padding: 0.18rem 0.45rem; line-height: 1.3; }
+/* 考察：成分 ablation の横棒 */
+.abl { display: flex; flex-direction: column; gap: 0.3rem; }
+.abl-r { display: flex; align-items: center; gap: 0.5rem; }
+.abl-n { width: 4.2rem; text-align: right; font-weight: 700; font-size: 0.85rem; flex-shrink: 0; }
+.abl-b { height: 0.9rem; border-radius: 3px; }
+.abl-v { font-size: 0.85rem; font-weight: 700; }
+.abl-r { --w: 1; }
+.abl-r .abl-b { max-width: 180px; }
+.abl-t table { width: 100%; border-collapse: collapse; }
+.abl-t th, .abl-t td { padding: 0.12rem 0.35rem; border-bottom: 1px solid #e3e3df; text-align: left; line-height: 1.3; }
+.abl-t td:first-child { white-space: nowrap; }
+.abl-t th, .abl-t td { padding: 0.1rem 0.3rem; }
+/* Appendix 数式 */
+.appendix-math > div { min-width: 0; }
+.appendix-math p { margin: 0.2rem 0; }
+.appendix-math .katex-display { margin: 0.25rem 0 0.45rem; }
+.appendix-math .katex { font-size: 0.95em; }
+.appendix-math ul { margin: 0.2rem 0 0 1.1rem; padding: 0; }
+.appendix-math li { margin: 0.1rem 0; }
+
+/* 定義表を使う付録：既存の数式・表の体裁に合わせる */
+.notation table { width: 100%; border-collapse: collapse; }
+.notation th, .notation td { padding: 0.25rem 0.35rem; border-bottom: 1px solid #e3e3df; text-align: left; vertical-align: top; line-height: 1.45; }
+.notation th { background: #f4f1ff; }
