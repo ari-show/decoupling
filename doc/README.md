@@ -52,3 +52,4 @@
 | 2-Exp-49 | [2-Exp-49_masked_day_training.md](2-Exp-49_masked_day_training.md) | 日のランダムマスク学習が短履歴推定・移植性・隠した日の day 成分に与える効果 |
 | 2-Exp-50 | [2-Exp-50_latent_swap_counterfactual.md](2-Exp-50_latent_swap_counterfactual.md) | 潜在表現の差し替えによる軸間の漏れ量（中心化出力分解 / 中心化なし / 潜在分割） |
 | 2-Exp-51 | [2-Exp-51_prospective_screening.md](2-Exp-51_prospective_screening.md) | 適用対象の事前スクリーニング（過去窓→将来窓、未来日マスク条件） |
+| 2-Exp-52 | [2-Exp-52_unified_future_horizon.md](2-Exp-52_unified_future_horizon.md) | 統一アーキテクチャの未来日性能を 7 日マスク・240 epoch で再現確認 |
