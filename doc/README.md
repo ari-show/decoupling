@@ -56,3 +56,4 @@
 | 2-Exp-53 | [2-Exp-53_baseline_diagnosis.md](2-Exp-53_baseline_diagnosis.md) | 基準値診断: どの基準値の後にどの残差構造が残るかを残差振幅の帰無分布比で判定（permutation の p 値は実データで判別せず） |
 | 2-Exp-54 | [2-Exp-54_centering_effect_long_budget.md](2-Exp-54_centering_effect_long_budget.md) | 中心化の効果量と頭打ち位置を epochs 480 / patience 48 で確定（centered と no_center の 2 variant） |
 | 2-Exp-55 | [2-Exp-55_axis_usability_and_centering.md](2-Exp-55_axis_usability_and_centering.md) | 軸構造の利用可能性（oracle 上限と汎化）と、中心化が成分の大きさを情報にすること。打ち消し比は 60〜480 epoch で不変（精度優位は 480 で符号反転）。事後解析・事前登録なし |
+| 2-Exp-57 | [2-Exp-57_interaction_cofiring_campaigns.md](2-Exp-57_interaction_cofiring_campaigns.md) | 交互作用成分の同時発火（同一商品・多店舗・同日）とキャンペーン列の対応。未使用系列・期間で再現し、上位は全店 1 日半額施策。記録列での説明は 1.5 割 |
