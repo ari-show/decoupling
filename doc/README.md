@@ -47,3 +47,4 @@
 | 2-Exp-44 | [2-Exp-44_component_interpretation.md](2-Exp-44_component_interpretation.md) | 主結果条件での成分解釈（分散寄与・bias 帰属・共変量応答・低ランク性） |
 | 2-Exp-45 | [2-Exp-45_day_hour_encoder_architecture.md](2-Exp-45_day_hour_encoder_architecture.md) | 日/時間帯 Encoder の GRU vs MLP 比較（パラメータ整合の対照つき・5 seed） |
 | 2-Exp-46 | [2-Exp-46_epoch_budget_component_stability.md](2-Exp-46_epoch_budget_component_stability.md) | 成分解釈の学習量依存性（epochs 120 / patience 16 と 60 の対照） |
+| 2-Exp-47 | [2-Exp-47_component_combination_views.md](2-Exp-47_component_combination_views.md) | 日成分（量）× 交互作用成分（形）の組み合わせ可視化 |
