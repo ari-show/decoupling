@@ -6,6 +6,7 @@
 | [references.md](references.md) | 参考文献 103 件の分野別リスト（層・本研究との関係・書誌確認状況つき） |
 | [references.bib](references.bib) | 上記 103 件の BibTeX。キーは references.md と一致 |
 | [anova_output_constraint_prior_work.md](anova_output_constraint_prior_work.md) | **本研究の方法そのものの先行例の精査**。出力成分への平均ゼロ制約は既存であることの確認、残る新規性の切り分け、本文の記述の修正案 |
+| [paper_map_direct_vs_residual.md](paper_map_direct_vs_residual.md) | **論文マップ**（問題設定 / 制約 / 水準の扱い / 検証 の 4 表）と、近傍研究が $y$ を再構成するのに本研究では成立しない理由（2-Exp-41 の実証と水準パラメータ数の議論） |
 
 ## 現状
 
@@ -17,6 +18,8 @@
 追加調査（[anova_output_constraint_prior_work.md](anova_output_constraint_prior_work.md)）の結果、**「出力成分に平均ゼロ・主効果除去制約を入れる」という設計には先行例がある**ことが確定した。最近傍は Märtens & Yau (2020) で、VAE の decoder 出力を主効果 + 交互作用に加法分解し、各成分へ周辺効果ゼロの積分制約をペナルティとして課している。
 
 したがって proposal の新規性 3 番はそのままでは主張できない。残る差分は「制約の仕組み」ではなく **軸の選び方（時系列の構造単位）** と **対象（強い基準値後の残差）** と **成分回復の定量評価** であり、主張の順序も 1 → 2 → 4 → 3 に変える。具体的な書き換え案は同ドキュメントにある。
+
+さらに [paper_map_direct_vs_residual.md](paper_map_direct_vs_residual.md) で、この 3 つの差分のうち「残差を対象にすること」が最も原理的であることを整理した。既存の functional ANOVA 系は水準がデータ全体で 1 個の切片なので中心化と $y$ の再構成が両立するが、本研究の軸は系列の添字構造なので水準が系列数ぶんあり、中心化すると全量が系列成分に集まって推定ボトルネックになる（2-Exp-41: direct 版は 5 seed 全敗、bias −0.728）。残差化は前処理の便宜ではなく、水準を閉形式に委ねる役割分担である。
 
 ## この調査で分かった、proposal に足すべき 2 点
 
