@@ -231,6 +231,16 @@ valid loss 差 2.1e−05）。原因は DataLoader の反復がグローバル R
 RNG 状態の退避・復元を入れた後は、**hook あり / なしで `history.jsonl` が
 2 variant とも完全一致**した。本番でも P1（2-Exp-54 との bit 一致）で再確認する。
 
+**退避しているのは torch の CPU と CUDA の状態だけで、numpy は含めていない。**
+推論経路（`predict_residuals` → DataLoader の反復 → `residual_batch` → model forward）に
+グローバル numpy RNG を消費する処理が無いことを確認したためである。
+リポジトリ内の numpy RNG はすべて `np.random.default_rng(seed)` で局所生成されており
+（`masking.py`、`retail_data.py`、`residual_diagnostics.py`、`residual_result_analysis.py`）、
+グローバル状態を触るのは学習開始前の `np.random.seed(seed)`（`train.py`）だけである。
+`residual_batch` と dataset の `__getitem__`、model forward にも RNG 使用は無い。
+したがって torch 側の退避で足りる。将来データ経路にグローバル numpy RNG が入った場合は
+`np.random.get_state()` / `set_state()` を足す必要がある。
+
 ### 曲線が取れていること
 
 | epoch | centered 比 | no_center 比 |
