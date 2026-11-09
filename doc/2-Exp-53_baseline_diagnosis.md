@@ -615,6 +615,14 @@ global が水準を担えないが、他の基準値ではこの恒等式が崩�
 
 ### 残った問い
 
+> **2026-11-09 追記**: 下の 2 件は [2-Exp-55_axis_usability_and_centering.md](2-Exp-55_axis_usability_and_centering.md)
+>（事後解析）で解決した。どちらも原因は同じで、**`diag_{axis}_relative_amplitude` は
+> モデルが使える構造の量を測っていない**ことだった。他方の軸で分割した oracle を当てると、
+> `series_mean` 以外では日軸・時間帯軸のどちらも held-out で負になる
+> （`cycle7_hour` の日軸は in-sample +1.75% に対し held-out −4.70%）。
+> `cycle7_hour` の day 成分がゼロなのは表現可能性でも最適化でもなく、使える構造が無いためである。
+> `recent_hour_d1` の 7.65× も雑音を数え上げたもので、held-out では d7 のほうが使える構造が多い。
+
 - **`cycle7_hour` の日軸。** 8.83× の構造が残っているのに centered の day 成分は寄与ゼロである。
   中心化の制約が (mod 7 クラス内偏差) を表現できないのか、最適化が到達していないのかを切り分ける。
 - **`recent_hour_d1` の非単調性。** 倍率 7.65× に対し改善率 +1.95% は `recent_hour_d7`（3.35× で +7.51%）
