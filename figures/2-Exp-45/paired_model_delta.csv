@@ -1,0 +1,16 @@
+all_runs_left_better,delta_ci_high,delta_ci_low,delta_mean_left_minus_right,delta_std,left,left_better_runs,metric,right,right_better_runs,runs,scenario
+False,0.001058681309223175,2.3502111434936524e-05,0.00047880038619041443,0.0006749203124871994,day_gru_hour_mlp,1,corrected_cell_mae,day_mlp_hour_mlp,4,5,series_mean
+False,0.017936062812805176,0.0003981590270996094,0.008111774921417236,0.011434431514230339,day_gru_hour_mlp,1,corrected_cell_wape,day_mlp_hour_mlp,4,5,series_mean
+False,0.005509200692176819,-0.0002494901418685913,0.0026334822177886963,0.003721641049384444,day_gru_hour_mlp,1,high_residual_top10_corrected_mae,day_mlp_hour_mlp,4,5,series_mean
+False,0.000439143180847168,-0.0004768051207065582,2.433285117149353e-05,0.0006184039998616367,day_gru_hour_mlp,2,corrected_cell_mae,day_mlpwide_hour_mlp,3,5,series_mean
+False,0.007446658611297607,-0.00884944200515747,0.0004122614860534668,0.010476902010655922,day_gru_hour_mlp,2,corrected_cell_wape,day_mlpwide_hour_mlp,3,5,series_mean
+False,0.003095269203186035,-0.0007912784814834595,0.0012903720140457152,0.002470001376931264,day_gru_hour_mlp,1,high_residual_top10_corrected_mae,day_mlpwide_hour_mlp,4,5,series_mean
+False,0.00025384947657585143,-0.00123361274600029,-0.0004898816347122193,0.0009316575808103191,day_gru_hour_mlp,3,corrected_cell_mae,day_gru_hour_gru,2,5,series_mean
+False,0.00430067777633667,-0.020899665355682374,-0.008299493789672851,0.01578399008371697,day_gru_hour_mlp,3,corrected_cell_wape,day_gru_hour_gru,2,5,series_mean
+False,-0.00016721785068511962,-0.010387596487998963,-0.005277407169342041,0.006693503703633954,day_gru_hour_mlp,3,high_residual_top10_corrected_mae,day_gru_hour_gru,2,5,series_mean
+False,-0.000291074812412262,-0.0018369242548942565,-0.0010617591440677642,0.0010109221423074495,day_gru_hour_mlp,4,corrected_cell_mae,day_gru_hour_mlpwide,1,5,series_mean
+False,-0.004931354522705078,-0.031044960021972656,-0.017988157272338868,0.01712687552180983,day_gru_hour_mlp,4,corrected_cell_wape,day_gru_hour_mlpwide,1,5,series_mean
+True,-0.001905924081802368,-0.007774887681007359,-0.004557231068611145,0.003773169934167891,day_gru_hour_mlp,5,high_residual_top10_corrected_mae,day_gru_hour_mlpwide,0,5,series_mean
+False,0.00012509673833847046,-0.0009259849786758423,-0.00041728168725967406,0.000676783473512657,day_gru_hour_mlp,4,corrected_cell_mae,day_mlp_hour_gru,1,5,series_mean
+False,0.0022845029830932616,-0.015687894821166993,-0.007069504261016846,0.01146596738236885,day_gru_hour_mlp,4,corrected_cell_wape,day_mlp_hour_gru,1,5,series_mean
+True,-0.00222553014755249,-0.004759484529495239,-0.003759515285491943,0.0017039258934822747,day_gru_hour_mlp,5,high_residual_top10_corrected_mae,day_mlp_hour_gru,0,5,series_mean

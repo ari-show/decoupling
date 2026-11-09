@@ -1,0 +1,9 @@
+all_runs_improved,baseline_metric,delta_ci_high,delta_ci_low,delta_mean,delta_std,improved_runs,metric,model,runs,scenario,worse_runs
+True,baseline_cell_mae,-0.020266892015933992,-0.021520873159170152,-0.020914340764284133,0.0008089956441234671,5,corrected_cell_mae,day_gru_hour_gru,5,series_mean,0
+True,high_residual_top10_baseline_mae,-0.07522388994693756,-0.08411888778209686,-0.0800008863210678,0.005654736711570433,5,high_residual_top10_corrected_mae,day_gru_hour_gru,5,series_mean,0
+True,baseline_cell_mae,-0.021161269396543503,-0.02166745662689209,-0.0213846392929554,0.0003169408223367323,5,corrected_cell_mae,day_gru_hour_mlp,5,series_mean,0
+True,high_residual_top10_baseline_mae,-0.08309770226478577,-0.08619968891143799,-0.08464869558811187,0.001996246839025495,5,high_residual_top10_corrected_mae,day_gru_hour_mlp,5,series_mean,0
+True,baseline_cell_mae,-0.01961164325475693,-0.02103411704301834,-0.020322880148887633,0.0009040368639605836,5,corrected_cell_mae,day_gru_hour_mlpwide,5,series_mean,0
+True,high_residual_top10_baseline_mae,-0.07624557018280029,-0.08393735885620117,-0.08009146451950074,0.0049189409126335045,5,high_residual_top10_corrected_mae,day_gru_hour_mlpwide,5,series_mean,0
+True,baseline_cell_mae,-0.02048732340335846,-0.021618989855051042,-0.02102995216846466,0.0007228931374970543,5,corrected_cell_mae,day_mlp_hour_gru,5,series_mean,0
+True,high_residual_top10_baseline_mae,-0.0791348785161972,-0.08355249762535095,-0.08140896558761597,0.002887068812590445,5,high_residual_top10_corrected_mae,day_mlp_hour_gru,5,series_mean,0
