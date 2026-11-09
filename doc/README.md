@@ -55,3 +55,4 @@
 | 2-Exp-52 | [2-Exp-52_unified_future_horizon.md](2-Exp-52_unified_future_horizon.md) | 統一アーキテクチャの未来日性能を 7 日マスク・240 epoch で再現確認 |
 | 2-Exp-53 | [2-Exp-53_baseline_diagnosis.md](2-Exp-53_baseline_diagnosis.md) | 基準値診断: どの基準値の後にどの残差構造が残るかを残差振幅の帰無分布比で判定（permutation の p 値は実データで判別せず） |
 | 2-Exp-54 | [2-Exp-54_centering_effect_long_budget.md](2-Exp-54_centering_effect_long_budget.md) | 中心化の効果量と頭打ち位置を epochs 480 / patience 48 で確定（centered と no_center の 2 variant） |
+| 2-Exp-55 | [2-Exp-55_axis_usability_and_centering.md](2-Exp-55_axis_usability_and_centering.md) | 軸構造の利用可能性（oracle 上限と汎化）と、中心化が成分の大きさを情報にすること（事後解析・事前登録なし） |
