@@ -53,3 +53,4 @@
 | 2-Exp-50 | [2-Exp-50_latent_swap_counterfactual.md](2-Exp-50_latent_swap_counterfactual.md) | 潜在表現の差し替えによる軸間の漏れ量（中心化出力分解 / 中心化なし / 潜在分割） |
 | 2-Exp-51 | [2-Exp-51_prospective_screening.md](2-Exp-51_prospective_screening.md) | 適用対象の事前スクリーニング（過去窓→将来窓、未来日マスク条件） |
 | 2-Exp-52 | [2-Exp-52_unified_future_horizon.md](2-Exp-52_unified_future_horizon.md) | 統一アーキテクチャの未来日性能を 7 日マスク・240 epoch で再現確認 |
+| 2-Exp-53 | [2-Exp-53_baseline_diagnosis.md](2-Exp-53_baseline_diagnosis.md) | 基準値診断: どの基準値の後にどの残差構造が残るかを permutation 検定で判定 |
