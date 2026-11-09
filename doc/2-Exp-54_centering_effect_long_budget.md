@@ -5,7 +5,8 @@
 関連: [2-Exp-48_main_table_long_budget.md](2-Exp-48_main_table_long_budget.md)、
 [2-Exp-46_epoch_budget_component_stability.md](2-Exp-46_epoch_budget_component_stability.md)、
 [2-Exp-40_jima_main_results.md](2-Exp-40_jima_main_results.md)、
-[2-Exp-44_component_interpretation.md](2-Exp-44_component_interpretation.md)
+[2-Exp-44_component_interpretation.md](2-Exp-44_component_interpretation.md)、
+[2-Exp-53_baseline_diagnosis.md](2-Exp-53_baseline_diagnosis.md)
 
 （実験 ID は 53 が基準値診断で使用済みのため 54 を使う。
 作業場所は `worktrees/exp36〜53` と同じ流儀。`data/` はメイン checkout への symlink で共有し、
@@ -114,7 +115,7 @@ patience は 2-Exp-46 の 16、2-Exp-48 の 24 と同じ比率（上限の 1/10�
   予算以外を変えていないので、学習軌跡は途中まで同一になるはずである。
 
   同一条件の再現性については根拠が 2 つある。1 つは 2-Exp-46 の `epochs60` が 2-Exp-44 と
-  全指標一致したこと。もう 1 つは 2-Exp-53（基準値診断。別ブランチで進行中、doc は未マージ）の
+  全指標一致したこと。もう 1 つは [2-Exp-53](2-Exp-53_baseline_diagnosis.md)（基準値診断）の
   `series_mean` scenario を 2-Exp-48 の `dim10` scenario と突き合わせた結果である。
 
   | variant | 2-Exp-53 | 2-Exp-48 | 差 |
@@ -208,8 +209,8 @@ uv run --with matplotlib python scripts/analyze_2_exp_44_component_interpretatio
 `run_residual_sweep` は全 cell のループを抜けた後に `all_results.csv` → `aggregate.csv` →
 `summary.json` の順で書くので、`all_results.csv` があれば全 cell 完走と読める。
 逆に途中で落ちるとこの 3 つは残らず、cell 別の `summary.json` だけが残る。
-その場合は cell 別から縫い直せる（2-Exp-53 ブランチの
-`scripts/rebuild_2_exp_53_summary.py`。名前は 53 専用だが中身は汎用で、
+その場合は cell 別から縫い直せる（`scripts/rebuild_2_exp_53_summary.py`。
+2-Exp-53 の PR で main に入った。名前は 53 専用だが中身は汎用で、
 sweep 本体の `_mean_std` を import しているので集計は一致する）。
 
 ## 出力
@@ -242,7 +243,7 @@ figures/2-Exp-54/
 - 成分指標は `output_decomp_centered` と `output_decomp_no_center` の 2 本でのみ取る。
   2-Exp-44 / 2-Exp-46 / 2-Exp-48 の系列と同じ指標なので、点を足す形で読める。
 - **本実験が測る効果量は、残差に残る時間帯構造が最大の条件（基準値 `series_mean`）での値である。**
-  2-Exp-53（基準値診断。別ブランチで進行中）が 240 / patience 24 で測った 4 基準値。
+  [2-Exp-53](2-Exp-53_baseline_diagnosis.md)（基準値診断）が 240 / patience 24 で測った 4 基準値。
   倍率は残差の時間帯振幅 ÷ permutation 帰無分布の 95% 点。
 
   | scenario | n | hour 倍率 | paired 差 | t | centered 勝敗 | LOO 符号反転 |
@@ -267,7 +268,8 @@ figures/2-Exp-54/
 
   **本実験はこの軸の最も効く端（46.33×）で測る。** したがって結論は
   「基準値 `series_mean`、予算 480 / patience 48」の 2 条件を明示して書き、
-  効果量を基準値に依らない値として書かない。基準値方向の整理は 2-Exp-53 の担当である。
+  効果量を基準値に依らない値として書かない。基準値方向の整理は
+  [2-Exp-53](2-Exp-53_baseline_diagnosis.md) の担当である（同 doc の成功条件 4、目的 4 / P9）。
   この単調性は 240 / patience 24 での観測であり、480 / patience 48 で保たれるかは未知である。
   2-Exp-48 で効果量が学習量依存だった（−0.00594 → −0.00153）ことを踏まえると、
   「中心化の効果量は予算と残存構造量の両方に依存し、予算方向では縮小、
