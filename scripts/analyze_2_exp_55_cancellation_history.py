@@ -199,6 +199,7 @@ def main() -> None:
 
     shapes: dict[str, Any] = {}
     intervals: dict[str, Any] = {}
+    agreement: dict[str, Any] = {}
     for label in VARIANTS.values():
         curve = [e for e in aggregate if e["variant"] == label]
         shapes[label] = summarize_shape([e["epoch"] for e in curve],
@@ -206,12 +207,37 @@ def main() -> None:
                                         [e["joint_mean"] for e in curve])
         intervals[label] = decompose(curve)
 
+        # Per-seed decomposition, then agreement per interval. With the total
+        # change in sum|c| small, one seed's sign on one interval cannot be told
+        # apart from learning noise; an interval is only evidence of acquired
+        # cancellation if the seeds agree on it. Raised by the 2-Exp-56 session.
+        per_seed: dict[int, list[dict[str, Any]]] = {}
+        for seed in args.seeds:
+            own = sorted([r for r in rows if r["variant"] == label and r["seed"] == seed],
+                         key=lambda r: r["epoch"])
+            if len(own) < 2:
+                continue
+            as_curve = [{"epoch": r["epoch"], "ratio_mean": r["ratio"],
+                         "abs_sum_mean": r["abs_sum"], "joint_mean": r["joint"]}
+                        for r in own]
+            per_seed[seed] = decompose(as_curve)
+        tally: dict[tuple[int, int], dict[str, Any]] = {}
+        for seed, ivs in per_seed.items():
+            for d in ivs:
+                key = (d["epoch_from"], d["epoch_to"])
+                slot = tally.setdefault(key, {"epoch_from": key[0], "epoch_to": key[1],
+                                              "seeds": 0, "acquired": 0, "rising": 0})
+                slot["seeds"] += 1
+                slot["acquired"] += int(d["acquired"])
+                slot["rising"] += int(d["dlog_ratio"] > 0)
+        agreement[label] = [tally[k] for k in sorted(tally)]
+
     out_dir = Path(args.out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
     (out_dir / "cancellation_history.json").write_text(json.dumps(
         {"run_dir": str(run_dir), "label": args.label, "rows": rows,
-         "aggregate": aggregate, "shape": shapes, "intervals": intervals},
-        indent=1, ensure_ascii=False))
+         "aggregate": aggregate, "shape": shapes, "intervals": intervals,
+         "agreement": agreement}, indent=1, ensure_ascii=False))
     fields = sorted({k for e in aggregate for k in e})
     with (out_dir / "cancellation_history.csv").open("w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=fields)
@@ -251,8 +277,24 @@ def main() -> None:
             print(f"  identity check max |dlog(r) - (dlog(S|c|) - dlog(|Sc|))| = {worst:.2e}")
             acq = [d for d in iv if d["acquired"]]
             spans = ", ".join(str(d["epoch_from"]) + "->" + str(d["epoch_to"]) for d in acq)
-            print(f"  intervals counting as acquired cancellation: "
+            print(f"  on the seed-mean curve, intervals counting as acquired: "
                   f"{len(acq)}/{len(iv)}" + (f"  ({spans})" if acq else ""))
+        ag = agreement.get(label) or []
+        if ag and max(d["seeds"] for d in ag) < 2:
+            print("  cross-seed agreement: not assessable (only 1 seed has a "
+                  "history; per-interval signs cannot be told from learning noise)")
+        elif ag:
+            n_seeds = max(d["seeds"] for d in ag)
+            unanimous = [d for d in ag if d["seeds"] == n_seeds and d["acquired"] == n_seeds]
+            majority = [d for d in ag if d["acquired"] * 2 > d["seeds"]]
+            print(f"  cross-seed agreement (n={n_seeds}): unanimous acquired "
+                  f"{len(unanimous)}/{len(ag)} intervals, majority {len(majority)}/{len(ag)}")
+            if unanimous:
+                print("    unanimous: " + ", ".join(
+                    f"{d['epoch_from']}->{d['epoch_to']}" for d in unanimous))
+            noisy = [d for d in ag if 0 < d["acquired"] < d["seeds"]]
+            print(f"    split (some seeds acquired, some not): {len(noisy)}/{len(ag)}"
+                  "  -- these are not evidence of acquisition")
 
     print(f"\nwrote cancellation history analysis to {out_dir}")
 
